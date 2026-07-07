@@ -1,0 +1,92 @@
+@use "../public/assets/scss/tailwind/tailwind";
+@forward "../public/assets/css/style.css";
+@forward "../public/assets/css/icons.css";
+
+//Packages css
+@forward "../node_modules/simplebar-react/dist/simplebar.min.css";
+
+
+.profile-timeline .profile-activity-media img {
+    @apply w-[4rem] h-[3rem] #{!important};
+}
+
+.top-nft img {
+    @apply w-[2.5rem] h-[2.5rem] #{!important};
+}
+.w-\[88\%\] {
+    width: 88%;
+}
+//.swiper-slide {
+//    [data-nimg="fill"] {
+//        width: 100% !important;
+//    }
+//}
+.image-container {
+    img {
+      @apply w-full h-auto #{!important};
+    }
+  }
+
+  .header-autoComplete {
+    @apply h-[35px] #{!important};
+  }
+
+
+
+
+
+  
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+@keyframes pulse-ring {
+  0%   { transform: translate(-50%, -50%) scale(0.8); opacity: 0.6; }
+  100% { transform: translate(-50%, -50%) scale(1.1); opacity: 0; }
+}
+
+@layer utilities {
+  .animate-ticker  { animation: ticker 120s linear infinite; }
+  .animate-ticker:hover { animation-play-state: paused; }
+  .animate-blink   { animation: blink 2s ease infinite; }
+  .pulse-ring-1    { animation: pulse-ring 3s ease-out infinite; }
+  .pulse-ring-2    { animation: pulse-ring 3s ease-out infinite 0.6s; }
+  .pulse-ring-3    { animation: pulse-ring 3s ease-out infinite 1.2s; }
+  .pulse-ring-4    { animation: pulse-ring 3s ease-out infinite 1.8s; }
+}
+
+// Özel imleç aktifken yerel imleci gizle (yalnızca fine pointer'da eklenir)
+.has-custom-cursor,
+.has-custom-cursor a,
+.has-custom-cursor button,
+.has-custom-cursor [role="button"],
+.has-custom-cursor summary,
+.has-custom-cursor label {
+  cursor: none;
+}
+
+// Hareket azaltma tercihinde marquee'yi durdur
+@media (prefers-reduced-motion: reduce) {
+  .animate-ticker { animation: none; }
+}
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 8px;
+  background: #1d9e75;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: 700;
+  text-decoration: none;
+  z-index: 9999;
+  transition: top 0.2s;
+}
+.skip-link:focus { top: 8px; }
