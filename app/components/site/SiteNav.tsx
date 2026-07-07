@@ -9,19 +9,18 @@ import Magnetic from "../motion/Magnetic";
 // Logo (K mark) + "Hire us" mıknatıslı buton + hamburger.
 // Menü açıkken sayfa scroll kilitlenir, Services alt menüsü açılıp kapanır.
 const LINKS = [
-  { label: "Work", href: "#work" },
-  { label: "Agency", href: "#agency" },
+  { label: "Çalışmalar", href: "#work" },
+  { label: "Studio", href: "#agency" },
   {
-    label: "Services",
+    label: "Hizmetler",
     children: [
-      { label: "Web design & development", href: "#work" },
-      { label: "Branding", href: "#work" },
-      { label: "Digital marketing", href: "#work" },
+      { label: "Ürün Keşfi & Strateji", href: "#services" },
+      { label: "MVP Mühendisliği", href: "#services" },
+      { label: "Yapay Zeka Entegrasyonu", href: "#services" },
     ],
   },
-  { label: "Blog", href: "#articles" },
-  { label: "Culture", href: "#agency" },
-  { label: "Contact", href: "#contact" },
+  { label: "Referanslar", href: "#articles" },
+  { label: "İletişim", href: "#contact" },
 ];
 
 function ArrowIcon({ className }: { className?: string }) {
@@ -35,12 +34,14 @@ function ArrowIcon({ className }: { className?: string }) {
   );
 }
 
+// Messta "M" monogramı — köşeleri yuvarlatılmış kare içinde keskin M harfi.
 function LogoMark({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 90 90" className={className} aria-hidden="true">
+    <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
+      <rect width="64" height="64" rx="16" fill="currentColor" />
       <path
-        fill="currentColor"
-        d="M5 5h80v80H5V5zM0 90h90V0H0v90zm64.66-15.67l-5.15-16.61h-.1l-5.35 16.61H47.6l9.49-24.09h4.74l9.39 24.09h-6.56zm-39.77 0V55.67h-6.66v-5.43H37.6v5.43h-6.66v18.66h-6.06zm34.52-59.16c-3.94-.1-7.67 1.74-9.99 4.92-.64.81-1.15 1.7-1.52 2.67-.6 1.64-.9 3.38-.9 5.13v.05c.07 6.78 5.62 12.22 12.4 12.15h.56c6.88-.29 12.22-6.1 11.93-12.97-.28-6.69-5.79-11.96-12.48-11.94m.1 19.48c-3.94 0-6.56-3.38-6.56-7.18s2.62-6.97 6.46-6.97 6.46 3.38 6.46 7.07-2.52 7.08-6.36 7.08m-28.87 5.02l-6.46-10.35h-.1v10.35h-6.06v-24.1h6.06v10.87h.1l6.66-10.87h6.36l-7.87 12 8.38 12.1h-7.06z"
+        d="M13 46V18h9l10 14 10-14h9v28h-9.5V31.5L33 45h-2L20.5 31.5V46H13Z"
+        className="fill-paper"
       />
     </svg>
   );
@@ -60,33 +61,36 @@ export default function SiteNav() {
 
   return (
     <>
-      {/* Sabit üst bar */}
-      <header className="fixed inset-x-0 top-0 z-[60] flex items-center justify-between px-[7%] py-6">
+      {/* Sabit üst bar — kompakt, cam efektli */}
+      <header className="fixed inset-x-0 top-0 z-[60] flex items-center justify-between px-[6%] py-3.5">
         <a
           href="#top"
-          aria-label="Home"
-          className="text-ink transition-transform duration-300 hover:rotate-90"
+          aria-label="Messta — Ana sayfa"
+          className="flex items-center gap-2.5 text-ink"
         >
-          <LogoMark className="h-9 w-9" />
+          <LogoMark className="h-8 w-8 transition-transform duration-500 hover:rotate-[360deg]" />
+          <span className="font-syne text-lg font-extrabold tracking-tight">
+            messta<span className="text-kotapink">.</span>
+          </span>
         </a>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <Magnetic strength={0.35}>
             <a
               href="#contact"
-              className="group hidden items-center gap-2 rounded-full border border-ink/25 px-5 py-2.5 text-sm font-medium transition-colors hover:bg-ink hover:text-paper sm:inline-flex"
+              className="group hidden items-center gap-2 rounded-full border border-ink/25 px-4 py-2 text-[13px] font-medium transition-colors hover:bg-ink hover:text-paper sm:inline-flex"
             >
-              <span>Hire us</span>
-              <ArrowIcon className="h-3.5 w-3.5 -rotate-45 transition-transform duration-300 group-hover:rotate-0" />
+              <span>Çalışalım</span>
+              <ArrowIcon className="h-3 w-3 -rotate-45 transition-transform duration-300 group-hover:rotate-0" />
             </a>
           </Magnetic>
 
           <button
             type="button"
-            aria-label={open ? "Close menu" : "Open menu"}
+            aria-label={open ? "Menüyü kapat" : "Menüyü aç"}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="relative z-[70] flex h-11 w-11 items-center justify-center rounded-full border border-ink/25 transition-colors hover:bg-ink hover:text-paper"
+            className="relative z-[70] flex h-10 w-10 items-center justify-center rounded-full border border-ink/25 transition-colors hover:bg-ink hover:text-paper"
           >
             <span className="flex flex-col items-center justify-center gap-[5px]">
               <span
@@ -189,17 +193,17 @@ export default function SiteNav() {
                     onClick={() => setOpen(false)}
                     className="group inline-flex items-center gap-3 rounded-full bg-acid px-6 py-3.5 font-medium text-ink"
                   >
-                    Start your project
+                    Projeni başlat
                     <ArrowIcon className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </a>
                 </div>
               </nav>
 
               <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-paper/50">
-                <a href="#contact" className="hover:text-paper">
-                  hello@studio.com
+                <a href="mailto:hello@messta.studio" className="hover:text-paper">
+                  hello@messta.studio
                 </a>
-                <span>London — New York</span>
+                <span>İstanbul — Berlin</span>
               </div>
             </motion.aside>
           </>
