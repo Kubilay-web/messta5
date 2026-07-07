@@ -50,6 +50,7 @@ function LogoMark({ className }: { className?: string }) {
 export default function SiteNav() {
   const [open, setOpen] = useState(false);
   const [sub, setSub] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const reduce = useReducedMotion();
 
   useEffect(() => {
@@ -59,10 +60,26 @@ export default function SiteNav() {
     };
   }, [open]);
 
+  // Kaydırınca üst bara buzlu arka plan ver: koyu bölümler üzerinde de okunur kalsın.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <>
       {/* Sabit üst bar — kompakt, cam efektli */}
-      <header className="fixed inset-x-0 top-0 z-[60] flex items-center justify-between px-[6%] py-3.5">
+      <header
+        className={`fixed inset-x-0 top-0 z-[60] flex items-center justify-between px-[6%] py-3.5 transition-colors duration-300 ${
+          open
+            ? "text-paper"
+            : scrolled
+            ? "bg-paper/80 text-ink shadow-[0_1px_0_rgba(0,0,0,0.06)] backdrop-blur-md"
+            : "text-ink"
+        }`}
+      >
         <a
           href="#top"
           aria-label="Messta — Ana sayfa"
@@ -78,7 +95,11 @@ export default function SiteNav() {
           <Magnetic strength={0.35}>
             <a
               href="#contact"
-              className="group hidden items-center gap-2 rounded-full border border-ink/25 px-4 py-2 text-[13px] font-medium transition-colors hover:bg-ink hover:text-paper sm:inline-flex"
+              className={`group hidden items-center gap-2 rounded-full border px-4 py-2 text-[13px] font-medium transition-colors sm:inline-flex ${
+                open
+                  ? "border-paper/30 hover:bg-paper hover:text-ink"
+                  : "border-ink/25 hover:bg-ink hover:text-paper"
+              }`}
             >
               <span>Çalışalım</span>
               <ArrowIcon className="h-3 w-3 -rotate-45 transition-transform duration-300 group-hover:rotate-0" />
@@ -90,7 +111,11 @@ export default function SiteNav() {
             aria-label={open ? "Menüyü kapat" : "Menüyü aç"}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="relative z-[70] flex h-10 w-10 items-center justify-center rounded-full border border-ink/25 transition-colors hover:bg-ink hover:text-paper"
+            className={`relative z-[70] flex h-10 w-10 items-center justify-center rounded-full border transition-colors ${
+              open
+                ? "border-paper/30 hover:bg-paper hover:text-ink"
+                : "border-ink/25 hover:bg-ink hover:text-paper"
+            }`}
           >
             <span className="flex flex-col items-center justify-center gap-[5px]">
               <span
