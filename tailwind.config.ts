@@ -75,6 +75,10 @@ module.exports = {
       },
         //Chat
            colors: {
+        ink: "#0b0b0b",
+        paper: "#efefef",
+        acid: "#d8f34e",
+        kotapink: "#f74ea1",
         secondary: "#8696a0",
         "teal-light": "#7ae3c3",
         "photopicker-overlay-background": "rgba(30,42,49,0.8)",
