@@ -1,16 +1,14 @@
 "use client";
 
 // app/components/site-i18n/LocaleSwitcher.tsx
-// Bağımsız (provider gerektirmeyen) dil değiştirici. Geçerli dili URL önekinden
-// (useCurrentLocale) okur, seçimde çerezi yazıp /tr /en /de yoluna taşır
-// (useLocaleSwitch). Ana site sunucu tarafı getSiteT() ile render edildiği için
-// SiteLangProvider mount edilmez; bu switcher onsuz çalışır.
+// Bağımsız (provider gerektirmeyen) dil değiştirici. Geçerli dili çerezden
+// (useCurrentLocale → NEXT_LOCALE) okur, seçimde çerezi yazıp sayfayı yeniden
+// yükler. URL öneksiz olduğu için yol değişmez. Ana site sunucu tarafı getSiteT()
+// ile render edildiği için tam sayfa render tüm metinleri yeni dile geçirir.
 
 import React, { useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
 import { SITE_LANGS } from "./site-dictionary";
 import { useCurrentLocale } from "@/app/components/LocaleLink";
-import { swapLocaleInPath } from "@/app/lib/i18n-routing";
 import { setLocaleCookie } from "@/app/lib/useLocale";
 
 export default function LocaleSwitcher({
@@ -19,11 +17,10 @@ export default function LocaleSwitcher({
   className?: string;
 }) {
   const lang = useCurrentLocale();
-  const pathname = usePathname() || "/";
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Dil değiştir: çerez + <html lang> anında güncellenir, sonra SERT yönlendirme yapılır.
+  // Dil değiştir: çerez + <html lang> anında güncellenir, sonra sayfa yeniden yüklenir.
   // Ana site metinleri hem sunucu (getSiteT) hem istemci (useSiteT) kaynaklı olduğundan,
   // tam sayfa render TÜM metinlerin aynı anda yeni dile geçmesini garantiler.
   const changeLang = (l: (typeof SITE_LANGS)[number]["code"]) => {
@@ -32,7 +29,7 @@ export default function LocaleSwitcher({
       return;
     }
     setLocaleCookie(l);
-    window.location.assign(swapLocaleInPath(pathname, l));
+    window.location.reload();
   };
 
   // Dışına tıklanınca menüyü kapat.

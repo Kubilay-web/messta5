@@ -136,13 +136,13 @@ export function websiteLd(base: string, locale: Locale, brand: Brand) {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: brand.name,
-    url: `${base}/${locale}`,
+    url: base,
     inLanguage: locale,
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: `${base}/${locale}?q={search_term_string}`,
+        urlTemplate: `${base}?q={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },

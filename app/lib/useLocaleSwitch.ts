@@ -1,24 +1,18 @@
 "use client";
 
 // app/lib/useLocaleSwitch.ts
-// Dil değiştirmede URL'i de değiştiren istemci yardımcısı.
-// Çerezi yazar (setLocaleCookie) + geçerli yolu yeni locale önekine taşır.
-// Böylece /tr/shop → /en/shop olur; sunucu yeniden render ile doğru dili besler.
+// Dil değiştirme yardımcısı. URL öneksiz olduğu için yalnızca çerezi yazar ve
+// sunucu bileşenlerini yeni dille yeniden render etmek için refresh eder.
 
-import { usePathname, useRouter } from "next/navigation";
-import { swapLocaleInPath, type Locale } from "./i18n-routing";
+import { useRouter } from "next/navigation";
+import { type Locale } from "./i18n-routing";
 import { setLocaleCookie } from "./useLocale";
 
 export function useLocaleSwitch() {
-  const pathname = usePathname();
   const router = useRouter();
 
   return (l: Locale) => {
-    setLocaleCookie(l);
-    // Geçerli çevrili+önekli yolu hedef dilin çevrili yoluna taşı.
-    // "/tr/magaza/sepet" + "en" → "/en/shop/cart"
-    const target = swapLocaleInPath(pathname || "/", l);
-    router.push(target);
-    router.refresh();
+    setLocaleCookie(l); // çerez + <html lang> + "localechange" olayı
+    router.refresh(); // sunucu bileşenleri yeni dilde yeniden render edilsin
   };
 }

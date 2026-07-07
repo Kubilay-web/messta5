@@ -1,17 +1,12 @@
 import type { MetadataRoute } from "next";
-import {
-  LOCALES,
-  DEFAULT_LOCALE,
-  siteUrl,
-  localizedHref,
-} from "@/app/lib/i18n-routing";
+import { siteUrl } from "@/app/lib/i18n-routing";
 
 // Sitemap saatte bir yenilenir. Üretimde mutlak host için NEXT_PUBLIC_SITE_URL ayarlayın.
 export const revalidate = 3600;
 
 type Entry = MetadataRoute.Sitemap[number];
 
-// Her yol için tek giriş + hreflang alternates (tr/en/de + x-default).
+// Öneksiz tek URL girişi (locale çerezle yönetiliyor, hreflang alternatifi yok).
 function entry(
   base: string,
   path: string,
@@ -20,18 +15,12 @@ function entry(
     changeFrequency?: Entry["changeFrequency"];
     priority?: number;
   }
-  
-): 
-Entry {
-  const languages: Record<string, string> = {};
-  for (const l of LOCALES) languages[l] = `${base}${localizedHref(l, path)}`;
-  languages["x-default"] = `${base}${localizedHref(DEFAULT_LOCALE, path)}`;
+): Entry {
   return {
-    url: `${base}${localizedHref(DEFAULT_LOCALE, path)}`,
+    url: `${base}${path === "/" ? "" : path}`,
     lastModified: opts.lastModified ?? new Date(),
     changeFrequency: opts.changeFrequency ?? "weekly",
     priority: opts.priority ?? 0.5,
-    alternates: { languages },
   };
 }
 
