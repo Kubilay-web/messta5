@@ -11,6 +11,13 @@ import {
   Layers,
   Globe,
   MousePointerClick,
+  TrendingUp,
+  Search,
+  Palette,
+  Mail,
+  BarChart3,
+  Handshake,
+  Users,
 } from "lucide-react";
 
 import SmoothScroll from "./components/motion/SmoothScroll";
@@ -27,159 +34,70 @@ import EthosSection from "./components/site/EthosSection";
 import TestimonialSlider from "./components/motion/TestimonialSlider";
 import Faq from "./components/site/Faq";
 import LogoMarquee from "./components/site/LogoMarquee";
+import ContactForm from "./components/site/ContactForm";
+import InvestorForm from "./components/site/InvestorForm";
+
+import { getMesstaT } from "./lib/messtaT";
+import prisma from "./lib/prisma";
+import { validateRequest } from "./auth";
+import { hasMesstaRole } from "./lib/messta-auth";
+import {
+  STACK,
+  VENTURE_META,
+  PROCESS_META,
+  pickLang,
+} from "./components/site-i18n/messta-content";
 
 // ————————————————————————————————————————————————————————————
 // Messta — teknoloji & startup fikirlerini hayata geçiren venture studio.
-// KOTA tarzı animasyon sistemini (framer-motion + lenis + özel imleç) yeniden
-// kullanan, tamamen responsive (mobil → masaüstü, flexbox/grid) tek sayfa.
+// Çok dilli (TR/EN/DE): metinler messta-content.ts sözlüğünden, locale çerezden
+// (NEXT_LOCALE) gelir. KOTA tarzı animasyon sistemi (framer-motion + lenis +
+// özel imleç) korunur. Tamamen responsive tek sayfa.
 // ————————————————————————————————————————————————————————————
 
-const STACK = [
-  "Next.js",
-  "React",
-  "TypeScript",
-  "Node.js",
-  "Python",
-  "PostgreSQL",
-  "Prisma",
-  "AWS",
-  "Docker",
-  "Kubernetes",
-  "OpenAI",
-  "Stripe",
-];
+// Dilden bağımsız görsel metadata (ikon/renk) — metin sözlükten eşleşir.
+const SERVICE_ICONS = [Sparkles, Braces, Cpu, LineChart, Layers, ShieldCheck];
+const MARKETING_ICONS = [TrendingUp, Search, Palette, MousePointerClick, Mail, BarChart3];
+const FEATURE_ICONS = [Zap, Boxes, Globe];
+const TEAM_ACCENTS = ["#f74ea1", "#d8f34e", "#7ae3c3", "#c7b8ff", "#0b0b0b", "#111827"];
 
-const CAPABILITIES = [
-  {
-    icon: Sparkles,
-    title: "Ürün Keşfi & Strateji",
-    body: "Fikri; kullanıcı araştırması, pazar analizi ve hızlı prototiplerle test edilebilir bir ürün vizyonuna dönüştürüyoruz.",
-    tag: "0–2 hafta",
-  },
-  {
-    icon: Braces,
-    title: "MVP Mühendisliği",
-    body: "Ölçeklenebilir mimari, temiz kod ve modern altyapıyla ilk çalışan sürümü haftalar içinde yayına alıyoruz.",
-    tag: "Full-stack",
-  },
-  {
-    icon: Cpu,
-    title: "Yapay Zeka Entegrasyonu",
-    body: "LLM, RAG ve otomasyon katmanlarını ürünün içine gömerek gerçek iş değeri üreten özellikler kuruyoruz.",
-    tag: "AI-native",
-  },
-  {
-    icon: LineChart,
-    title: "Büyüme & Ölçekleme",
-    body: "Analitik, deney altyapısı ve performans optimizasyonuyla ürünü ilk kullanıcıdan milyonlara taşıyoruz.",
-    tag: "0 → 1 → n",
-  },
-  {
-    icon: Layers,
-    title: "Tasarım Sistemi",
-    body: "Marka, arayüz ve mikro-etkileşimleri tek bir ölçeklenebilir tasarım dilinde birleştiriyoruz.",
-    tag: "Design ops",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Güvenlik & Uyum",
-    body: "Kimlik doğrulama, ödeme ve veri güvenliğini kurumsal standartlarda baştan doğru kuruyoruz.",
-    tag: "Enterprise",
-  },
-];
+function initials(name: string) {
+  return name
+    .split(" ")
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
 
-const PROCESS = [
-  {
-    index: "01",
-    title: "Keşfet",
-    body: "Fikri parçalarına ayırıyor, riskleri ve fırsatları haritalayıp net bir yol planı çıkarıyoruz.",
-    image:
-      "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80",
-    tint: "#f74ea1",
-  },
-  {
-    index: "02",
-    title: "İnşa Et",
-    body: "Tasarım ve mühendislik tek takım halinde çalışır; her hafta dokunulabilir bir sürüm teslim edilir.",
-    image:
-      "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80",
-    tint: "#d8f34e",
-  },
-  {
-    index: "03",
-    title: "Büyüt",
-    body: "Yayına alır, veriyle öğrenir ve ürünü pazarın gerçek talebine göre hızla iterasyona sokarız.",
-    image:
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
-    tint: "#0b0b0b",
-  },
-];
+export default async function Page() {
+  const { copy, lang } = await getMesstaT();
 
-const VENTURES = [
-  { name: "fintra", tag: "Fintech · Ödeme altyapısı", year: "2025", color: "#d8f34e" },
-  { name: "nomad", tag: "SaaS · Uzaktan ekipler", year: "2025", color: "#f74ea1" },
-  { name: "medix", tag: "HealthTech · AI teşhis", year: "2024", color: "#0b0b0b", ink: "#efefef" },
-  { name: "cargoo", tag: "Lojistik · Optimizasyon", year: "2024", color: "#7ae3c3" },
-  { name: "lumen", tag: "EnerjiTech · IoT", year: "2023", color: "#111827", ink: "#efefef" },
-  { name: "verse", tag: "Yapay zeka · Üretken içerik", year: "2023", color: "#c7b8ff" },
-];
+  // Panele erişimi olan kullanıcıya (messtaRole atanmış) admin kısayolu göster.
+  const { user } = await validateRequest();
+  const showAdmin = hasMesstaRole(user?.messtaRole, "VIEWER");
 
-const TESTIMONIALS = [
-  {
-    quote:
-      "Fikirden yayınlanan ürüne 9 haftada ulaştık. Messta bir ajans değil, gerçek bir kurucu ortak gibi çalıştı.",
-    name: "Elif Demir",
-    role: "Kurucu, Fintra",
-  },
-  {
-    quote:
-      "Yapay zeka özelliklerimizi onlar kurdu ve dönüşüm oranımız iki katına çıktı. Mühendislik kalitesi olağanüstü.",
-    name: "Marco Rossi",
-    role: "CTO, Nomad",
-  },
-  {
-    quote:
-      "İlk yatırım turumuzu onların hazırladığı prototiple kapattık. Hız ve titizlik nadiren bir arada olur.",
-    name: "Aylin Kaya",
-    role: "CEO, Medix",
-  },
-  {
-    quote:
-      "Ölçeklenme sancılarımızı 3 ayda çözdüler. Altyapımız artık 10 kat trafiği gülerek kaldırıyor.",
-    name: "James Park",
-    role: "VP Eng, Cargoo",
-  },
-];
+  // Kadromuz: admin panelinden yayınlanan üyeler varsa onları kullan, yoksa statik.
+  const dbTeam = await prisma.messtaTeamMember
+    .findMany({
+      where: { published: true },
+      orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+    })
+    .catch(() => []);
 
-const FAQ = [
-  {
-    q: "Sadece bir fikrim var, koda hiç dokunmadım. Yine de çalışır mıyız?",
-    a: "Kesinlikle. Çoğu ortağımız yola bir sunum veya bir cümlelik fikirle çıkıyor. Keşif aşamasında birlikte vizyonu netleştirip yol haritasına dönüştürüyoruz.",
-  },
-  {
-    q: "Bir MVP ne kadar sürede yayına girer?",
-    a: "Kapsama göre değişse de tipik olarak 6–10 hafta içinde gerçek kullanıcıların kullanabileceği çalışan bir sürüm teslim ediyoruz.",
-  },
-  {
-    q: "Kodun ve ürünün sahipliği kimde olur?",
-    a: "Tamamı sizde. Tüm kaynak kodu, tasarım dosyaları ve altyapı ilk günden itibaren sizin mülkiyetinizdedir. İsterseniz ekibinize eksiksiz devir yaparız.",
-  },
-  {
-    q: "Ekibinizle nasıl fiyatlandırıyorsunuz?",
-    a: "Sabit kapsamlı proje, aylık retainer ve bazı seçili girişimler için hisse + nakit karması modelleri sunuyoruz. İlk görüşmede size en uygun modeli birlikte seçiyoruz.",
-  },
-  {
-    q: "Yayından sonra desteğe devam ediyor musunuz?",
-    a: "Evet. Büyüme aşamasında yanınızdayız: yeni özellikler, ölçekleme, performans ve ekibinizin işe alımına kadar destek veriyoruz.",
-  },
-];
+  const teamMembers = dbTeam.length
+    ? dbTeam.map((m) => ({
+        name: m.name,
+        role: pickLang(m.role, lang) || m.name,
+        bio: pickLang(m.bio, lang),
+      }))
+    : copy.team.members;
 
-export default function Page() {
   return (
     <SmoothScroll>
       <ScrollProgress />
       <CustomCursor />
-      <SiteNav />
+      <SiteNav showAdmin={showAdmin} />
 
       <main
         id="top"
@@ -202,26 +120,23 @@ export default function Page() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-kotapink opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-kotapink" />
               </span>
-              Venture Studio · 2026 için sıra sınırlı
+              {copy.hero.badge}
             </span>
           </Reveal>
 
           <HeroTitle
             className="mt-8 max-w-[15ch] font-syne text-[clamp(1.5rem,6vw,6rem)] font-extrabold leading-[0.95] tracking-tight lg:max-w-5xl"
-            text="Fikirleri çalışan"
-            accent="ürünlere dönüştürüyoruz."
+            text={copy.hero.titleLead}
+            accent={copy.hero.titleAccent}
             accentColor="#f74ea1"
           />
 
           <div className="mt-10 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
             <Reveal delay={0.15}>
               <p className="max-w-xl text-lg leading-relaxed text-ink/70 md:text-xl">
-                Messta; teknoloji ve startup fikirlerini strateji, tasarım ve
-                mühendislikle birleştirip{" "}
-                <span className="font-semibold text-ink">
-                  haftalar içinde yayına alan
-                </span>{" "}
-                bir venture studio&apos;dur.
+                {copy.hero.descA}
+                <span className="font-semibold text-ink">{copy.hero.descStrong}</span>
+                {copy.hero.descB}
               </p>
             </Reveal>
 
@@ -232,7 +147,7 @@ export default function Page() {
                     href="#contact"
                     className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-ink px-7 py-4 font-medium text-paper transition-colors hover:bg-kotapink sm:w-auto sm:justify-start"
                   >
-                    Fikrini anlat
+                    {copy.hero.ctaPrimary}
                     <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover:rotate-45" />
                   </a>
                 </Magnetic>
@@ -242,7 +157,7 @@ export default function Page() {
                     className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-ink/25 px-7 py-4 font-medium transition-colors hover:bg-ink hover:text-paper sm:w-auto sm:justify-start"
                   >
                     <MousePointerClick className="h-5 w-5" />
-                    Çalışmalarımız
+                    {copy.hero.ctaSecondary}
                   </a>
                 </Magnetic>
               </div>
@@ -252,7 +167,7 @@ export default function Page() {
           {/* Teknoloji şeridi */}
           <div className="mt-16 border-t border-ink/10 pt-8">
             <p className="mb-5 text-xs font-medium uppercase tracking-widest text-ink/40">
-              Kullandığımız teknolojiler
+              {copy.hero.techLabel}
             </p>
             <LogoMarquee items={STACK} />
           </div>
@@ -261,12 +176,7 @@ export default function Page() {
         {/* ———————————————————————— STATS ———————————————————————— */}
         <section id="agency" className="border-t border-ink/10 px-5 sm:px-8 md:px-[7%] py-20 md:py-28">
           <div className="grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-4">
-            {[
-              { value: "120+", label: "Yayınlanan ürün" },
-              { value: "48M", label: "Toplam kullanıcı erişimi", suffix: "" },
-              { value: "9", label: "Ortalama hafta / MVP" },
-              { value: "98%", label: "Tekrar çalışma oranı" },
-            ].map((s) => (
+            {copy.stats.map((s) => (
               <Reveal key={s.label}>
                 <div className="flex flex-col">
                   <Counter
@@ -289,47 +199,43 @@ export default function Page() {
             <Reveal>
               <div>
                 <span className="font-syne text-sm font-bold tracking-widest text-ink/40">
-                  NE YAPIYORUZ /
+                  {copy.services.eyebrow}
                 </span>
                 <h2 className="mt-4 max-w-2xl font-syne text-4xl font-bold leading-[0.95] tracking-tight sm:text-5xl md:text-6xl">
-                  Fikirden ölçeğe kadar
+                  {copy.services.titleA}
                   <br />
-                  tek çatı altında.
+                  {copy.services.titleB}
                 </h2>
               </div>
             </Reveal>
             <Reveal delay={0.1}>
-              <p className="max-w-sm text-lg text-ink/60">
-                Strateji, tasarım, mühendislik ve büyüme — dağınık ekiplerle
-                değil, tek entegre bir takımla.
-              </p>
+              <p className="max-w-sm text-lg text-ink/60">{copy.services.sub}</p>
             </Reveal>
           </div>
 
           <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {CAPABILITIES.map((c, i) => (
-              <Reveal key={c.title} delay={i * 0.05}>
-                <Tilt max={6} className="h-full">
-                  <div className="group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-ink/10 bg-white p-8 transition-colors hover:border-ink/30">
-                    <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-acid/0 blur-2xl transition-all duration-500 group-hover:bg-acid/40" />
-                    <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-ink text-paper transition-colors group-hover:bg-kotapink">
-                      <c.icon className="h-6 w-6" />
+            {copy.services.items.map((c, i) => {
+              const Icon = SERVICE_ICONS[i % SERVICE_ICONS.length];
+              return (
+                <Reveal key={c.title} delay={i * 0.05}>
+                  <Tilt max={6} className="h-full">
+                    <div className="group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-ink/10 bg-white p-8 transition-colors hover:border-ink/30">
+                      <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-acid/0 blur-2xl transition-all duration-500 group-hover:bg-acid/40" />
+                      <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-ink text-paper transition-colors group-hover:bg-kotapink">
+                        <Icon className="h-6 w-6" />
+                      </div>
+                      <div className="mb-3 flex items-center gap-3">
+                        <h3 className="font-syne text-xl font-bold tracking-tight">{c.title}</h3>
+                      </div>
+                      <p className="flex-1 text-[0.95rem] leading-relaxed text-ink/60">{c.body}</p>
+                      <span className="mt-6 inline-flex w-fit rounded-full border border-ink/15 px-3 py-1 text-xs font-medium text-ink/50">
+                        {c.tag}
+                      </span>
                     </div>
-                    <div className="mb-3 flex items-center gap-3">
-                      <h3 className="font-syne text-xl font-bold tracking-tight">
-                        {c.title}
-                      </h3>
-                    </div>
-                    <p className="flex-1 text-[0.95rem] leading-relaxed text-ink/60">
-                      {c.body}
-                    </p>
-                    <span className="mt-6 inline-flex w-fit rounded-full border border-ink/15 px-3 py-1 text-xs font-medium text-ink/50">
-                      {c.tag}
-                    </span>
-                  </div>
-                </Tilt>
-              </Reveal>
-            ))}
+                  </Tilt>
+                </Reveal>
+              );
+            })}
           </div>
         </section>
 
@@ -337,27 +243,100 @@ export default function Page() {
         <section className="px-5 py-8 sm:px-8 md:px-[7%] md:py-16">
           <Reveal>
             <span className="font-syne text-sm font-bold tracking-widest text-ink/40">
-              NASIL ÇALIŞIYORUZ /
+              {copy.process.eyebrow}
             </span>
             <h2 className="mt-4 max-w-3xl font-syne text-4xl font-bold leading-[0.95] tracking-tight sm:text-5xl md:text-6xl">
-              Üç adımda, sıfırdan
+              {copy.process.titleA}
               <br />
-              <span className="text-aurora">ölçeğe.</span>
+              <span className="text-aurora">{copy.process.titleAccent}</span>
             </h2>
           </Reveal>
 
           <div className="mt-8">
-            {PROCESS.map((p) => (
+            {copy.process.items.map((p, i) => (
               <EthosSection
-                key={p.index}
-                index={p.index}
+                key={p.title}
+                index={String(i + 1).padStart(2, "0")}
                 title={p.title}
                 body={p.body}
-                image={p.image}
-                tint={p.tint}
+                image={PROCESS_META[i].image}
+                tint={PROCESS_META[i].tint}
               />
             ))}
           </div>
+        </section>
+
+        {/* ———————————————————————— DİJİTAL PAZARLAMA (NEW) ———————————————————————— */}
+        <section
+          id="marketing"
+          className="relative overflow-hidden border-t border-ink/10 px-5 sm:px-8 md:px-[7%] py-20 md:py-32"
+        >
+          <div className="pointer-events-none absolute inset-0 -z-10">
+            <div className="absolute -right-24 top-20 h-[28rem] w-[28rem] animate-floaty-2 rounded-full bg-kotapink/20 blur-[120px]" />
+            <div className="absolute -left-16 bottom-0 h-[24rem] w-[24rem] animate-floaty rounded-full bg-teal-light/20 blur-[110px]" />
+          </div>
+
+          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <Reveal>
+              <div>
+                <span className="font-syne text-sm font-bold tracking-widest text-kotapink">
+                  {copy.marketing.eyebrow}
+                </span>
+                <h2 className="mt-4 max-w-3xl font-syne text-4xl font-bold leading-[0.98] tracking-tight sm:text-5xl md:text-6xl">
+                  {copy.marketing.titleA}{" "}
+                  <span className="text-aurora">{copy.marketing.titleAccent}</span>
+                </h2>
+              </div>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <p className="max-w-md text-lg text-ink/60">{copy.marketing.sub}</p>
+            </Reveal>
+          </div>
+
+          <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {copy.marketing.items.map((m, i) => {
+              const Icon = MARKETING_ICONS[i % MARKETING_ICONS.length];
+              return (
+                <Reveal key={m.title} delay={(i % 3) * 0.06}>
+                  <Tilt max={5} className="h-full">
+                    <div className="group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-ink/10 bg-white p-8 transition-colors hover:border-kotapink/40">
+                      <div className="flex items-start justify-between">
+                        <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-kotapink/10 text-kotapink transition-colors group-hover:bg-kotapink group-hover:text-paper">
+                          <Icon className="h-6 w-6" />
+                        </div>
+                        <div className="text-right">
+                          <div className="font-syne text-2xl font-extrabold tracking-tight text-ink">
+                            {m.metric}
+                          </div>
+                          <div className="text-[11px] uppercase tracking-wider text-ink/40">
+                            {m.metricLabel}
+                          </div>
+                        </div>
+                      </div>
+                      <h3 className="mt-6 font-syne text-xl font-bold tracking-tight">{m.title}</h3>
+                      <p className="mt-3 flex-1 text-[0.95rem] leading-relaxed text-ink/60">
+                        {m.body}
+                      </p>
+                    </div>
+                  </Tilt>
+                </Reveal>
+              );
+            })}
+          </div>
+
+          <Reveal delay={0.1}>
+            <div className="mt-12">
+              <Magnetic strength={0.3}>
+                <a
+                  href="#contact"
+                  className="group inline-flex items-center gap-3 rounded-full bg-ink px-7 py-4 font-medium text-paper transition-colors hover:bg-kotapink"
+                >
+                  {copy.marketing.cta}
+                  <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover:rotate-45" />
+                </a>
+              </Magnetic>
+            </div>
+          </Reveal>
         </section>
 
         {/* ———————————————————————— VENTURES / WORK ———————————————————————— */}
@@ -369,12 +348,12 @@ export default function Page() {
             <Reveal>
               <div>
                 <span className="font-syne text-sm font-bold tracking-widest text-ink/40">
-                  PORTFÖY /
+                  {copy.ventures.eyebrow}
                 </span>
                 <h2 className="mt-4 font-syne text-4xl font-bold leading-[0.95] tracking-tight sm:text-5xl md:text-6xl">
-                  Hayata geçirdiğimiz
+                  {copy.ventures.titleA}
                   <br />
-                  girişimler.
+                  {copy.ventures.titleB}
                 </h2>
               </div>
             </Reveal>
@@ -383,18 +362,18 @@ export default function Page() {
                 href="#contact"
                 className="inline-flex items-center gap-2 text-sm font-medium text-ink/60 transition-colors hover:text-ink"
               >
-                Sıradaki senin olabilir
+                {copy.ventures.link}
                 <ArrowUpRight className="h-4 w-4" />
               </a>
             </Reveal>
           </div>
 
           <div className="mt-14 grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-            {VENTURES.map((v, i) => (
+            {VENTURE_META.map((v, i) => (
               <Reveal key={v.name} delay={(i % 3) * 0.08}>
                 <WorkCard
                   name={v.name}
-                  tag={v.tag}
+                  tag={copy.ventures.tags[i]}
                   year={v.year}
                   color={v.color}
                   ink={v.ink}
@@ -407,35 +386,91 @@ export default function Page() {
         {/* ———————————————————————— FEATURE STRIP ———————————————————————— */}
         <section className="border-t border-ink/10 bg-ink px-5 sm:px-8 md:px-[7%] py-20 text-paper md:py-28">
           <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
-            {[
-              {
-                icon: Zap,
-                title: "Hız takıntısı",
-                body: "İlk çalışan sürüm haftalarla ölçülür, aylarla değil. Her hafta gerçek ilerleme görürsün.",
-              },
-              {
-                icon: Boxes,
-                title: "Ürün + kurucu zihniyeti",
-                body: "Sadece kod yazmıyoruz; işini, kullanıcını ve büyüme motorunu birlikte tasarlıyoruz.",
-              },
-              {
-                icon: Globe,
-                title: "Ölçeğe hazır mimari",
-                body: "İlk kullanıcı için de milyonuncu kullanıcı için de aynı sağlam temeli kuruyoruz.",
-              },
-            ].map((f, i) => (
-              <Reveal key={f.title} delay={i * 0.08}>
-                <div className="flex flex-col">
-                  <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-acid text-ink">
-                    <f.icon className="h-6 w-6" />
+            {copy.features.map((f, i) => {
+              const Icon = FEATURE_ICONS[i % FEATURE_ICONS.length];
+              return (
+                <Reveal key={f.title} delay={i * 0.08}>
+                  <div className="flex flex-col">
+                    <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-acid text-ink">
+                      <Icon className="h-6 w-6" />
+                    </div>
+                    <h3 className="font-syne text-2xl font-bold tracking-tight">{f.title}</h3>
+                    <p className="mt-4 leading-relaxed text-paper/60">{f.body}</p>
                   </div>
-                  <h3 className="font-syne text-2xl font-bold tracking-tight">
-                    {f.title}
-                  </h3>
-                  <p className="mt-4 leading-relaxed text-paper/60">{f.body}</p>
-                </div>
+                </Reveal>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ———————————————————————— YATIRIMCILARLA BULUŞTURMA (NEW) ———————————————————————— */}
+        <section
+          id="investors"
+          className="relative overflow-hidden bg-ink px-5 sm:px-8 md:px-[7%] py-20 text-paper md:py-32"
+        >
+          <div className="pointer-events-none absolute inset-0 -z-0 opacity-60">
+            <div className="absolute inset-0 bg-tech-grid opacity-20" />
+            <div className="absolute right-1/4 top-0 h-[26rem] w-[26rem] animate-floaty rounded-full bg-acid/10 blur-[120px]" />
+            <div className="absolute bottom-0 left-1/4 h-[24rem] w-[24rem] animate-floaty-3 rounded-full bg-kotapink/15 blur-[120px]" />
+          </div>
+
+          <div className="relative grid grid-cols-1 gap-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
+            {/* Sol: anlatı + adımlar + istatistik */}
+            <div>
+              <Reveal>
+                <span className="inline-flex items-center gap-2 font-syne text-sm font-bold tracking-widest text-acid">
+                  <Handshake className="h-4 w-4" />
+                  {copy.investors.eyebrow}
+                </span>
+                <h2 className="mt-4 max-w-xl font-syne text-4xl font-bold leading-[0.98] tracking-tight sm:text-5xl md:text-6xl">
+                  {copy.investors.titleA}{" "}
+                  <span className="text-acid">{copy.investors.titleAccent}</span>
+                </h2>
+                <p className="mt-6 max-w-lg text-lg text-paper/60">{copy.investors.sub}</p>
               </Reveal>
-            ))}
+
+              <div className="mt-10 space-y-5">
+                {copy.investors.steps.map((s, i) => (
+                  <Reveal key={s.title} delay={i * 0.08}>
+                    <div className="flex gap-5 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+                      <span className="font-syne text-2xl font-extrabold text-acid">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <div>
+                        <h3 className="font-syne text-lg font-bold tracking-tight">{s.title}</h3>
+                        <p className="mt-1 text-sm leading-relaxed text-paper/55">{s.body}</p>
+                      </div>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+
+              <div className="mt-10 grid grid-cols-3 gap-4 border-t border-white/10 pt-8">
+                {copy.investors.stats.map((s) => (
+                  <Reveal key={s.label}>
+                    <div>
+                      <div className="font-syne text-3xl font-extrabold tracking-tight text-paper sm:text-4xl">
+                        {s.value}
+                      </div>
+                      <div className="mt-1 text-xs text-paper/50">{s.label}</div>
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            </div>
+
+            {/* Sağ: başvuru formu */}
+            <Reveal delay={0.15}>
+              <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-7 backdrop-blur sm:p-9">
+                <h3 className="font-syne text-2xl font-bold tracking-tight">
+                  {copy.investors.formTitle}
+                </h3>
+                <p className="mt-2 text-sm text-paper/55">{copy.investors.formSub}</p>
+                <div className="mt-6">
+                  <InvestorForm copy={copy.investors} />
+                </div>
+              </div>
+            </Reveal>
           </div>
         </section>
 
@@ -446,18 +481,93 @@ export default function Page() {
         >
           <Reveal>
             <span className="font-syne text-sm font-bold tracking-widest text-ink/40">
-              KURUCULAR NE DİYOR /
+              {copy.testimonials.eyebrow}
             </span>
             <h2 className="mt-4 max-w-3xl font-syne text-4xl font-bold leading-[0.95] tracking-tight sm:text-5xl md:text-6xl">
-              Birlikte kurduğumuz
+              {copy.testimonials.titleA}
               <br />
-              hikâyeler.
+              {copy.testimonials.titleB}
             </h2>
           </Reveal>
 
           <div className="mt-14">
-            <TestimonialSlider items={TESTIMONIALS} accent="#f74ea1" />
+            <TestimonialSlider items={copy.testimonials.items} accent="#f74ea1" />
           </div>
+        </section>
+
+        {/* ———————————————————————— KADROMUZ (NEW) ———————————————————————— */}
+        <section
+          id="team"
+          className="border-t border-ink/10 px-5 sm:px-8 md:px-[7%] py-20 md:py-32"
+        >
+          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <Reveal>
+              <div>
+                <span className="inline-flex items-center gap-2 font-syne text-sm font-bold tracking-widest text-ink/40">
+                  <Users className="h-4 w-4" />
+                  {copy.team.eyebrow}
+                </span>
+                <h2 className="mt-4 max-w-2xl font-syne text-4xl font-bold leading-[0.98] tracking-tight sm:text-5xl md:text-6xl">
+                  {copy.team.titleA}{" "}
+                  <span className="text-kotapink">{copy.team.titleAccent}</span>
+                </h2>
+              </div>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <p className="max-w-sm text-lg text-ink/60">{copy.team.sub}</p>
+            </Reveal>
+          </div>
+
+          <div className="mt-14 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {teamMembers.map((m, i) => (
+              <Reveal key={m.name} delay={(i % 3) * 0.07}>
+                <Tilt max={5} className="h-full">
+                  <div className="group flex h-full flex-col rounded-[1.5rem] border border-ink/10 bg-white p-7 transition-colors hover:border-ink/30">
+                    <div className="flex items-center gap-4">
+                      <span
+                        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full font-syne text-lg font-extrabold"
+                        style={{
+                          backgroundColor: TEAM_ACCENTS[i % TEAM_ACCENTS.length],
+                          color:
+                            TEAM_ACCENTS[i % TEAM_ACCENTS.length] === "#d8f34e" ||
+                            TEAM_ACCENTS[i % TEAM_ACCENTS.length] === "#7ae3c3"
+                              ? "#0b0b0b"
+                              : "#efefef",
+                        }}
+                        aria-hidden="true"
+                      >
+                        {initials(m.name)}
+                      </span>
+                      <div>
+                        <h3 className="font-syne text-lg font-bold tracking-tight">{m.name}</h3>
+                        <p className="text-sm text-kotapink">{m.role}</p>
+                      </div>
+                    </div>
+                    <p className="mt-5 text-[0.95rem] leading-relaxed text-ink/60">{m.bio}</p>
+                  </div>
+                </Tilt>
+              </Reveal>
+            ))}
+          </div>
+
+          {/* Aramıza katıl kartı */}
+          <Reveal delay={0.1}>
+            <div className="mt-8 flex flex-col items-start justify-between gap-6 rounded-[1.5rem] border border-ink/10 bg-ink px-8 py-8 text-paper md:flex-row md:items-center">
+              <div>
+                <h3 className="font-syne text-2xl font-bold tracking-tight">{copy.team.joinTitle}</h3>
+                <p className="mt-2 max-w-md text-paper/60">{copy.team.joinBody}</p>
+              </div>
+              <Magnetic strength={0.3}>
+                <a
+                  href="#contact"
+                  className="group inline-flex items-center gap-3 rounded-full bg-acid px-7 py-4 font-medium text-ink transition-transform hover:-translate-y-0.5"
+                >
+                  {copy.team.joinCta}
+                  <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover:rotate-45" />
+                </a>
+              </Magnetic>
+            </div>
+          </Reveal>
         </section>
 
         {/* ———————————————————————— FAQ ———————————————————————— */}
@@ -466,21 +576,18 @@ export default function Page() {
             <Reveal>
               <div className="md:sticky md:top-28">
                 <span className="font-syne text-sm font-bold tracking-widest text-ink/40">
-                  SSS /
+                  {copy.faq.eyebrow}
                 </span>
                 <h2 className="mt-4 font-syne text-4xl font-bold leading-[0.95] tracking-tight sm:text-5xl">
-                  Aklındaki
+                  {copy.faq.titleA}
                   <br />
-                  sorular.
+                  {copy.faq.titleB}
                 </h2>
-                <p className="mt-6 max-w-xs text-ink/60">
-                  Cevabını bulamadın mı? Bize yazman yeterli — 24 saat içinde
-                  dönüyoruz.
-                </p>
+                <p className="mt-6 max-w-xs text-ink/60">{copy.faq.desc}</p>
               </div>
             </Reveal>
             <Reveal delay={0.1}>
-              <Faq items={FAQ} />
+              <Faq items={copy.faq.items} />
             </Reveal>
           </div>
         </section>
@@ -500,37 +607,42 @@ export default function Page() {
             <Reveal>
               <span className="inline-flex items-center gap-2 rounded-full border border-ink/15 bg-paper/60 px-4 py-2 text-sm font-medium backdrop-blur">
                 <Rocket className="h-4 w-4 text-kotapink" />
-                Hadi başlayalım
+                {copy.contact.badge}
               </span>
             </Reveal>
             <Reveal delay={0.1}>
               <h2 className="mt-8 font-syne text-[12vw] font-extrabold leading-[0.9] tracking-tight sm:text-7xl md:text-8xl">
-                Bir fikrin mi var?
+                {copy.contact.title}
               </h2>
             </Reveal>
             <Reveal delay={0.2}>
               <p className="mx-auto mt-8 max-w-xl text-lg text-ink/70 md:text-xl">
-                Aklındaki fikri 12 aya kalmadan gerçek kullanıcıların
-                kullandığı bir ürüne dönüştürelim. İlk görüşme ücretsiz.
+                {copy.contact.desc}
               </p>
             </Reveal>
+
+            {/* Çalışan iletişim formu */}
             <Reveal delay={0.3}>
-              <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
-                <Magnetic strength={0.3}>
+              <ContactForm copy={copy.contact} />
+            </Reveal>
+
+            <Reveal delay={0.35}>
+              <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                <Magnetic strength={0.25}>
                   <a
-                    href="mailto:hello@messta.studio"
-                    className="group inline-flex items-center gap-3 rounded-full bg-ink px-8 py-4 text-lg font-medium text-paper transition-colors hover:bg-kotapink"
+                    href={`mailto:${copy.contact.email}`}
+                    className="inline-flex items-center gap-2 rounded-full border border-ink/25 px-6 py-3 text-sm font-medium transition-colors hover:bg-ink hover:text-paper"
                   >
-                    hello@messta.studio
-                    <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover:rotate-45" />
+                    <Mail className="h-4 w-4" />
+                    {copy.contact.email}
                   </a>
                 </Magnetic>
                 <Magnetic strength={0.25}>
                   <a
                     href="#top"
-                    className="inline-flex items-center gap-2 rounded-full border border-ink/25 px-8 py-4 text-lg font-medium transition-colors hover:bg-ink hover:text-paper"
+                    className="inline-flex items-center gap-2 rounded-full border border-ink/25 px-6 py-3 text-sm font-medium transition-colors hover:bg-ink hover:text-paper"
                   >
-                    Başa dön
+                    {copy.contact.backToTop}
                   </a>
                 </Magnetic>
               </div>
@@ -545,27 +657,16 @@ export default function Page() {
               <span className="font-syne text-2xl font-extrabold tracking-tight">
                 messta<span className="text-kotapink">.</span>
               </span>
-              <p className="mt-2 max-w-xs text-sm text-ink/50">
-                Teknoloji & startup fikirlerini hayata geçiren venture studio.
-              </p>
+              <p className="mt-2 max-w-xs text-sm text-ink/50">{copy.footer.tagline}</p>
             </div>
             <div className="flex flex-wrap gap-x-8 gap-y-2 text-sm text-ink/60">
-              <a href="#services" className="hover:text-ink">
-                Hizmetler
-              </a>
-              <a href="#work" className="hover:text-ink">
-                Portföy
-              </a>
-              <a href="#articles" className="hover:text-ink">
-                Referanslar
-              </a>
-              <a href="#contact" className="hover:text-ink">
-                İletişim
-              </a>
+              {copy.footer.links.map((l) => (
+                <a key={l.href} href={l.href} className="hover:text-ink">
+                  {l.label}
+                </a>
+              ))}
             </div>
-            <p className="text-sm text-ink/40">
-              © {2026} Messta. İstanbul — Berlin.
-            </p>
+            <p className="text-sm text-ink/40">© {2026} {copy.footer.rights}</p>
           </div>
         </footer>
       </main>

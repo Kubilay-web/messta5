@@ -41,6 +41,8 @@ enum RoleProject {
   MEMBER
 }
 
+
+
 //
 
 model User {
@@ -84,6 +86,9 @@ model User {
   shopReviews         ShopReview[]      @relation("UserToShopReview")
   isVerfied          Boolean           @default(false)
   token              Int?
+
+  // Messta admin paneli yetki rolü (null → panele erişim yok)
+  messtaRole         MesstaRole?
 
   //
 
@@ -7275,4 +7280,110 @@ model ShopNewsletterSubscriber {
 
   @@index([userId])
   @@map("shop_newsletter_subscribers")
+}
+
+
+
+
+// ————————————————————————————————————————————————————————————
+// MESSTA — venture studio landing sayfası & admin paneli modelleri.
+// MongoDB (additive). Ana User modeline dokunmaz; bağımsız koleksiyonlar.
+// ————————————————————————————————————————————————————————————
+
+
+// Messta venture studio admin paneli yetki rolleri (hiyerarşik).
+// ADMIN  > EDITOR > VIEWER
+//  - ADMIN : tüm içerik + başvurular + kullanıcı/rol yönetimi
+//  - EDITOR: içerik (CMS/kadro) + gelen başvuruların yönetimi (rol yönetimi YOK)
+//  - VIEWER: yalnızca görüntüleme (salt-okunur)
+enum MesstaRole {
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+// "Fikrini anlat" iletişim formundan gelen başvurular.
+model MesstaLead {
+  id      String  @id @default(cuid()) @map("_id")
+  name    String
+  email   String
+  idea    String
+  // NEW (yeni) | READ (okundu) | CONTACTED (iletişime geçildi) | ARCHIVED (arşiv)
+  status  String  @default("NEW")
+  locale  String  @default("tr")
+  source  String  @default("contact") // contact | hero
+  notes   String? // admin iç notu
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("messta_leads")
+}
+
+// Yatırımcı eşleştirme formundan gelen başvurular (kurucu veya yatırımcı).
+model MesstaInvestorApplication {
+  id       String  @id @default(cuid()) @map("_id")
+  name     String
+  email    String
+  company  String?
+  // founder | investor
+  audience String  @default("founder")
+  stage    String? // pre-seed, seed, series A ...
+  ticket   String? // tur / bilet büyüklüğü
+  message  String?
+  // NEW | REVIEWING | MATCHED | REJECTED | ARCHIVED
+  status   String  @default("NEW")
+  locale   String  @default("tr")
+  notes    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([audience])
+  @@index([createdAt])
+  @@map("messta_investor_applications")
+}
+
+// Kadromuz bölümü — admin panelinden yönetilen ekip üyeleri.
+model MesstaTeamMember {
+  id        String  @id @default(cuid()) @map("_id")
+  name      String
+  // Rol/başlık — 3 dilde JSON string ({"tr":"","en":"","de":""}) olarak saklanır.
+  role      String
+  bio       String
+  avatarUrl String?
+  linkedin  String?
+  twitter   String?
+  order     Int     @default(0)
+  published Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([order])
+  @@map("messta_team_members")
+}
+
+// Genel site içeriği (CMS): portföy/ventures, hizmetler, referanslar, SSS.
+// kind ile ayrışır; çok dilli metinler JSON string olarak title/body içinde tutulur.
+model MesstaContentItem {
+  id        String  @id @default(cuid()) @map("_id")
+  // venture | service | testimonial | faq
+  kind      String
+  // JSON string: {"tr":"...","en":"...","de":"..."}
+  title     String
+  body      String  @default("{}")
+  // ek alanlar (yıl, renk, tag, rol, metrik...) JSON string olarak
+  meta      String  @default("{}")
+  order     Int     @default(0)
+  published Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([kind, order])
+  @@map("messta_content_items")
 }

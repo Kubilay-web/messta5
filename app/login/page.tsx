@@ -4,7 +4,6 @@ import { validateRequest } from "@/app/auth";
 import { getServerLocale } from "@/app/lib/locale";
 import { localizedHref, type Locale } from "@/app/lib/i18n-routing";
 import { pageMeta } from "@/app/lib/seo";
-import { SiteLangProvider } from "@/app/components/site-i18n/SiteLang";
 import LoginForm from "./login-form";
 
 export const dynamic = "force-dynamic";
@@ -30,9 +29,5 @@ export default async function Login({
   const { user } = await validateRequest();
   if (user) nav(target);
 
-  return (
-    <SiteLangProvider initialLang={initialLang}>
-      <LoginForm redirect={target} />
-    </SiteLangProvider>
-  );
+  return <LoginForm redirect={target} />;
 }
