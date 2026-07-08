@@ -3,7 +3,7 @@
 
 import prisma from "@/app/lib/prisma";
 import { validateRequest } from "@/app/auth";
-import { hasMesstaRole } from "@/app/lib/messta-auth";
+import { hasInvenimusRole } from "@/app/lib/invenimus-auth";
 import { PageHeader, EmptyState, unpackLang } from "../_ui";
 import TeamManager, { type TeamDTO } from "./TeamManager";
 
@@ -11,9 +11,9 @@ export const dynamic = "force-dynamic";
 
 export default async function TeamPage() {
   const { user } = await validateRequest();
-  const canEdit = hasMesstaRole(user?.messtaRole, "EDITOR");
+  const canEdit = hasInvenimusRole(user?.invenimusRole, "EDITOR");
 
-  const members = await prisma.messtaTeamMember.findMany({
+  const members = await prisma.invenimusTeamMember.findMany({
     orderBy: [{ order: "asc" }, { createdAt: "asc" }],
   });
 

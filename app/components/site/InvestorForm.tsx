@@ -10,11 +10,11 @@ import { ArrowUpRight, CheckCircle2, Lock } from "lucide-react";
 import {
   submitInvestorApplication,
   type ActionResult,
-} from "@/app/lib/messta-actions";
-import type { MesstaCopy } from "@/app/components/site-i18n/messta-content";
+} from "@/app/lib/invenimus-actions";
+import type { InvenimusCopy } from "@/app/components/site-i18n/invenimus-content";
 
 const initial: ActionResult = { ok: false };
-const DRAFT_KEY = "messta:investorDraft";
+const DRAFT_KEY = "invenimus:investorDraft";
 
 export default function InvestorForm({
   copy,
@@ -24,7 +24,7 @@ export default function InvestorForm({
   redirectTo = "/#investors",
   gateHint,
 }: {
-  copy: MesstaCopy["investors"];
+  copy: InvenimusCopy["investors"];
   isLoggedIn: boolean;
   defaultName?: string;
   defaultEmail?: string;

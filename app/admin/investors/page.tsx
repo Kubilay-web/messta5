@@ -4,7 +4,7 @@
 import prisma from "@/app/lib/prisma";
 import Link from "next/link";
 import { validateRequest } from "@/app/auth";
-import { hasMesstaRole } from "@/app/lib/messta-auth";
+import { hasInvenimusRole } from "@/app/lib/invenimus-auth";
 import { PageHeader, Card, EmptyState, formatDate } from "../_ui";
 import InvestorRow, { type InvestorDTO } from "./InvestorRow";
 
@@ -29,13 +29,13 @@ export default async function InvestorsPage({
   const activeAudience = audience === "founder" || audience === "investor" ? audience : "ALL";
 
   const { user } = await validateRequest();
-  const canEdit = hasMesstaRole(user?.messtaRole, "EDITOR");
+  const canEdit = hasInvenimusRole(user?.invenimusRole, "EDITOR");
 
   const where: Record<string, string> = {};
   if (activeStatus !== "ALL") where.status = activeStatus;
   if (activeAudience !== "ALL") where.audience = activeAudience;
 
-  const apps = await prisma.messtaInvestorApplication.findMany({
+  const apps = await prisma.invenimusInvestorApplication.findMany({
     where,
     orderBy: { createdAt: "desc" },
     take: 200,

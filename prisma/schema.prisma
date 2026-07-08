@@ -87,8 +87,8 @@ model User {
   isVerfied          Boolean           @default(false)
   token              Int?
 
-  // Messta admin paneli yetki rolü (null → panele erişim yok)
-  messtaRole         MesstaRole?
+  // Invenimus admin paneli yetki rolü (null → panele erişim yok)
+  invenimusRole         InvenimusRole?    @map("messtaRole")
 
   //
 
@@ -7286,24 +7286,24 @@ model ShopNewsletterSubscriber {
 
 
 // ————————————————————————————————————————————————————————————
-// MESSTA — venture studio landing sayfası & admin paneli modelleri.
+// INVENIMUS — venture studio landing sayfası & admin paneli modelleri.
 // MongoDB (additive). Ana User modeline dokunmaz; bağımsız koleksiyonlar.
 // ————————————————————————————————————————————————————————————
 
 
-// Messta venture studio admin paneli yetki rolleri (hiyerarşik).
+// Invenimus venture studio admin paneli yetki rolleri (hiyerarşik).
 // ADMIN  > EDITOR > VIEWER
 //  - ADMIN : tüm içerik + başvurular + kullanıcı/rol yönetimi
 //  - EDITOR: içerik (CMS/kadro) + gelen başvuruların yönetimi (rol yönetimi YOK)
 //  - VIEWER: yalnızca görüntüleme (salt-okunur)
-enum MesstaRole {
+enum InvenimusRole {
   ADMIN
   EDITOR
   VIEWER
 }
 
 // "Fikrini anlat" iletişim formundan gelen başvurular.
-model MesstaLead {
+model InvenimusLead {
   id      String  @id @default(cuid()) @map("_id")
   name    String
   email   String
@@ -7323,7 +7323,7 @@ model MesstaLead {
 }
 
 // Yatırımcı eşleştirme formundan gelen başvurular (kurucu veya yatırımcı).
-model MesstaInvestorApplication {
+model InvenimusInvestorApplication {
   id       String  @id @default(cuid()) @map("_id")
   name     String
   email    String
@@ -7348,7 +7348,7 @@ model MesstaInvestorApplication {
 }
 
 // Kadromuz bölümü — admin panelinden yönetilen ekip üyeleri.
-model MesstaTeamMember {
+model InvenimusTeamMember {
   id        String  @id @default(cuid()) @map("_id")
   name      String
   // Rol/başlık — 3 dilde JSON string ({"tr":"","en":"","de":""}) olarak saklanır.
@@ -7369,7 +7369,7 @@ model MesstaTeamMember {
 
 // Genel site içeriği (CMS): portföy/ventures, hizmetler, referanslar, SSS.
 // kind ile ayrışır; çok dilli metinler JSON string olarak title/body içinde tutulur.
-model MesstaContentItem {
+model InvenimusContentItem {
   id        String  @id @default(cuid()) @map("_id")
   // venture | service | testimonial | faq
   kind      String
@@ -7386,4 +7386,21 @@ model MesstaContentItem {
 
   @@index([kind, order])
   @@map("messta_content_items")
+}
+
+// Landing sayfası bölüm CMS'i (overlay). Her key bir bölüme karşılık gelir
+// (hero, stats, services, process, marketing, investors, features, ventures,
+// testimonials, faq, contact, footer, seo). data = tüm bölüm yükü JSON string:
+// çok dilli alanlar {"tr","en","de"} objesi, listeler dizi olarak. Landing render'ında
+// statik sözlüğün üstüne yayılır; boşsa/kayıt yoksa statik içeriğe düşer.
+model InvenimusSection {
+  id        String  @id @default(cuid()) @map("_id")
+  key       String  @unique
+  data      String  @default("{}")
+  published Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("messta_sections")
 }

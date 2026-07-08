@@ -19,14 +19,14 @@ export default async function AdminDashboard() {
     recentLeads,
     recentInvestors,
   ] = await Promise.all([
-    prisma.messtaLead.count(),
-    prisma.messtaLead.count({ where: { status: "NEW" } }),
-    prisma.messtaInvestorApplication.count(),
-    prisma.messtaInvestorApplication.count({ where: { status: "NEW" } }),
-    prisma.messtaTeamMember.count(),
-    prisma.messtaContentItem.count(),
-    prisma.messtaLead.findMany({ orderBy: { createdAt: "desc" }, take: 5 }),
-    prisma.messtaInvestorApplication.findMany({ orderBy: { createdAt: "desc" }, take: 5 }),
+    prisma.invenimusLead.count(),
+    prisma.invenimusLead.count({ where: { status: "NEW" } }),
+    prisma.invenimusInvestorApplication.count(),
+    prisma.invenimusInvestorApplication.count({ where: { status: "NEW" } }),
+    prisma.invenimusTeamMember.count(),
+    prisma.invenimusContentItem.count(),
+    prisma.invenimusLead.findMany({ orderBy: { createdAt: "desc" }, take: 5 }),
+    prisma.invenimusInvestorApplication.findMany({ orderBy: { createdAt: "desc" }, take: 5 }),
   ]);
 
   const stats = [
@@ -44,7 +44,7 @@ export default async function AdminDashboard() {
 
   return (
     <div>
-      <PageHeader title="Panel" subtitle="Messta yönetim özeti" />
+      <PageHeader title="Panel" subtitle="Invenimus yönetim özeti" />
 
       {/* Sayaçlar */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

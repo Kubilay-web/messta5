@@ -1,6 +1,6 @@
 "use server";
 
-// app/lib/messta-actions.ts
+// app/lib/invenimus-actions.ts
 // Landing sayfasındaki herkese açık formların server action'ları.
 // "Fikrini anlat" (lead) ve yatırımcı eşleştirme başvurusu DB'ye yazılır.
 
@@ -37,7 +37,7 @@ export async function submitLead(_prev: ActionResult, formData: FormData): Promi
 
   try {
     const locale = await getServerLocale();
-    await prisma.messtaLead.create({
+    await prisma.invenimusLead.create({
       data: {
         name: parsed.data.name,
         email: parsed.data.email,
@@ -87,7 +87,7 @@ export async function submitInvestorApplication(
 
   try {
     const locale = await getServerLocale();
-    await prisma.messtaInvestorApplication.create({
+    await prisma.invenimusInvestorApplication.create({
       data: {
         name: parsed.data.name,
         email: parsed.data.email,

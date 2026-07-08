@@ -37,20 +37,17 @@ import LogoMarquee from "./components/site/LogoMarquee";
 import ContactForm from "./components/site/ContactForm";
 import InvestorForm from "./components/site/InvestorForm";
 
-import { getMesstaT } from "./lib/messtaT";
+import { getServerLocale } from "./lib/locale";
+import type { Locale } from "./lib/i18n-routing";
+import { getInvenimusPageContent } from "./lib/invenimus-page-content";
 import prisma from "./lib/prisma";
 import { validateRequest } from "./auth";
-import { hasMesstaRole } from "./lib/messta-auth";
-import {
-  STACK,
-  VENTURE_META,
-  PROCESS_META,
-  pickLang,
-} from "./components/site-i18n/messta-content";
+import { hasInvenimusRole } from "./lib/invenimus-auth";
+import { STACK, pickLang } from "./components/site-i18n/invenimus-content";
 
 // ————————————————————————————————————————————————————————————
-// Messta — teknoloji & startup fikirlerini hayata geçiren venture studio.
-// Çok dilli (TR/EN/DE): metinler messta-content.ts sözlüğünden, locale çerezden
+// Invenimus — teknoloji & startup fikirlerini hayata geçiren venture studio.
+// Çok dilli (TR/EN/DE): metinler invenimus-content.ts sözlüğünden, locale çerezden
 // (NEXT_LOCALE) gelir. KOTA tarzı animasyon sistemi (framer-motion + lenis +
 // özel imleç) korunur. Tamamen responsive tek sayfa.
 // ————————————————————————————————————————————————————————————
@@ -70,18 +67,31 @@ function initials(name: string) {
     .toUpperCase();
 }
 
-export default async function Page() {
-  const { copy, lang } = await getMesstaT();
+export async function generateMetadata() {
+  const lang = (await getServerLocale()) as Locale;
+  const { seo } = await getInvenimusPageContent(lang);
+  return {
+    title: seo.title,
+    description: seo.description,
+    openGraph: seo.ogImage
+      ? { title: seo.title, description: seo.description, images: [{ url: seo.ogImage }] }
+      : { title: seo.title, description: seo.description },
+  };
+}
 
-  // Panele erişimi olan kullanıcıya (messtaRole atanmış) admin kısayolu göster.
+export default async function Page() {
+  const lang = (await getServerLocale()) as Locale;
+  const { copy, media } = await getInvenimusPageContent(lang);
+
+  // Panele erişimi olan kullanıcıya (invenimusRole atanmış) admin kısayolu göster.
   const { user } = await validateRequest();
-  const showAdmin = hasMesstaRole(user?.messtaRole, "VIEWER");
+  const showAdmin = hasInvenimusRole(user?.invenimusRole, "VIEWER");
   const isLoggedIn = !!user;
   const authName = user?.displayName || user?.username || "";
   const authEmail = user?.email || "";
 
   // Kadromuz: admin panelinden yayınlanan üyeler varsa onları kullan, yoksa statik.
-  const dbTeam = await prisma.messtaTeamMember
+  const dbTeam = await prisma.invenimusTeamMember
     .findMany({
       where: { published: true },
       orderBy: [{ order: "asc" }, { createdAt: "asc" }],
@@ -262,8 +272,8 @@ export default async function Page() {
                 index={String(i + 1).padStart(2, "0")}
                 title={p.title}
                 body={p.body}
-                image={PROCESS_META[i].image}
-                tint={PROCESS_META[i].tint}
+                image={media.process[i]?.image}
+                tint={media.process[i]?.tint}
               />
             ))}
           </div>
@@ -372,14 +382,15 @@ export default async function Page() {
           </div>
 
           <div className="mt-14 grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-            {VENTURE_META.map((v, i) => (
-              <Reveal key={v.name} delay={(i % 3) * 0.08}>
+            {media.ventures.map((v, i) => (
+              <Reveal key={`${v.name}-${i}`} delay={(i % 3) * 0.08}>
                 <WorkCard
                   name={v.name}
                   tag={copy.ventures.tags[i]}
                   year={v.year}
                   color={v.color}
                   ink={v.ink}
+                  image={v.image}
                 />
               </Reveal>
             ))}
@@ -672,7 +683,7 @@ export default async function Page() {
           <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
             <div>
               <span className="font-syne text-2xl font-extrabold tracking-tight">
-                messta<span className="text-kotapink">.</span>
+                invenimus<span className="text-kotapink">.</span>
               </span>
               <p className="mt-2 max-w-xs text-sm text-ink/50">{copy.footer.tagline}</p>
             </div>

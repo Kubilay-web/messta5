@@ -1,7 +1,7 @@
-// app/components/site-i18n/messta-content.ts
-// Messta landing sayfası için TR/EN/DE içerik sözlüğü.
+// app/components/site-i18n/invenimus-content.ts
+// Invenimus landing sayfası için TR/EN/DE içerik sözlüğü.
 // Locale çerezden (NEXT_LOCALE) türetilir; sunucu bileşeni getServerLocale ile,
-// istemci bileşeni useClientLocale ile bu objeyi seçer. Bkz. app/lib/messtaT.ts.
+// istemci bileşeni useClientLocale ile bu objeyi seçer. Bkz. app/lib/invenimusT.ts.
 
 import type { Locale } from "@/app/lib/i18n-routing";
 
@@ -9,7 +9,7 @@ import type { Locale } from "@/app/lib/i18n-routing";
 // Tip: her dil bu şekli doldurmak zorunda → TR/EN/DE drift'i derleme
 // anında yakalanır.
 // ————————————————————————————————————————————————————————————
-export interface MesstaCopy {
+export interface InvenimusCopy {
   nav: {
     links: { label: string; href: string }[];
     services: { label: string; children: { label: string; href: string }[] };
@@ -226,7 +226,7 @@ export const PROCESS_META = [
 // ————————————————————————————————————————————————————————————
 // TÜRKÇE
 // ————————————————————————————————————————————————————————————
-const tr: MesstaCopy = {
+const tr: InvenimusCopy = {
   nav: {
     links: [
       { label: "Çalışmalar", href: "#work" },
@@ -255,7 +255,7 @@ const tr: MesstaCopy = {
     titleLead: "Fikirleri çalışan",
     titleAccent: "ürünlere dönüştürüyoruz.",
     descA:
-      "Messta; teknoloji ve startup fikirlerini strateji, tasarım ve mühendislikle birleştirip ",
+      "Invenimus; teknoloji ve startup fikirlerini strateji, tasarım ve mühendislikle birleştirip ",
     descStrong: "haftalar içinde yayına alan",
     descB: " bir venture studio'dur.",
     ctaPrimary: "Fikrini anlat",
@@ -446,7 +446,7 @@ const tr: MesstaCopy = {
     items: [
       {
         quote:
-          "Fikirden yayınlanan ürüne 9 haftada ulaştık. Messta bir ajans değil, gerçek bir kurucu ortak gibi çalıştı.",
+          "Fikirden yayınlanan ürüne 9 haftada ulaştık. Invenimus bir ajans değil, gerçek bir kurucu ortak gibi çalıştı.",
         name: "Elif Demir",
         role: "Kurucu, Fintra",
       },
@@ -543,7 +543,7 @@ const tr: MesstaCopy = {
     badge: "Hadi başlayalım",
     title: "Bir fikrin mi var?",
     desc: "Aklındaki fikri 12 aya kalmadan gerçek kullanıcıların kullandığı bir ürüne dönüştürelim. İlk görüşme ücretsiz.",
-    email: "hello@messta.studio",
+    email: "hello@invenimus.studio",
     backToTop: "Başa dön",
     formName: "Ad Soyad",
     formEmail: "E-posta",
@@ -563,7 +563,7 @@ const tr: MesstaCopy = {
       { label: "Kadromuz", href: "#team" },
       { label: "İletişim", href: "#contact" },
     ],
-    rights: "Messta. İstanbul — Berlin.",
+    rights: "Invenimus. İstanbul — Berlin.",
     location: "İstanbul — Berlin",
   },
   auth: {
@@ -594,7 +594,7 @@ const tr: MesstaCopy = {
       eyebrow: "Aramıza katıl",
       brandTitle: "Bir sonraki girişim seninki olabilir.",
       brandDesc:
-        "Ücretsiz hesabını oluştur; fikrini paylaş, sürecini takip et ve Messta ekosistemine katıl.",
+        "Ücretsiz hesabını oluştur; fikrini paylaş, sürecini takip et ve Invenimus ekosistemine katıl.",
       perks: [
         "Dakikalar içinde kurulum",
         "Fikrini doğrudan ekibe ulaştır",
@@ -629,7 +629,7 @@ const tr: MesstaCopy = {
 // ————————————————————————————————————————————————————————————
 // İNGİLİZCE
 // ————————————————————————————————————————————————————————————
-const en: MesstaCopy = {
+const en: InvenimusCopy = {
   nav: {
     links: [
       { label: "Work", href: "#work" },
@@ -658,7 +658,7 @@ const en: MesstaCopy = {
     titleLead: "We turn ideas into",
     titleAccent: "products that ship.",
     descA:
-      "Messta is a venture studio that blends strategy, design and engineering to take technology and startup ideas ",
+      "Invenimus is a venture studio that blends strategy, design and engineering to take technology and startup ideas ",
     descStrong: "live in a matter of weeks",
     descB: ".",
     ctaPrimary: "Pitch your idea",
@@ -849,7 +849,7 @@ const en: MesstaCopy = {
     items: [
       {
         quote:
-          "We went from idea to a shipped product in 9 weeks. Messta worked like a real co-founder, not an agency.",
+          "We went from idea to a shipped product in 9 weeks. Invenimus worked like a real co-founder, not an agency.",
         name: "Elif Demir",
         role: "Founder, Fintra",
       },
@@ -946,7 +946,7 @@ const en: MesstaCopy = {
     badge: "Let's get started",
     title: "Got an idea?",
     desc: "Let's turn the idea on your mind into a product real users use in under 12 months. The first call is free.",
-    email: "hello@messta.studio",
+    email: "hello@invenimus.studio",
     backToTop: "Back to top",
     formName: "Full name",
     formEmail: "Email",
@@ -966,7 +966,7 @@ const en: MesstaCopy = {
       { label: "Team", href: "#team" },
       { label: "Contact", href: "#contact" },
     ],
-    rights: "Messta. Istanbul — Berlin.",
+    rights: "Invenimus. Istanbul — Berlin.",
     location: "Istanbul — Berlin",
   },
   auth: {
@@ -997,7 +997,7 @@ const en: MesstaCopy = {
       eyebrow: "Join us",
       brandTitle: "The next venture could be yours.",
       brandDesc:
-        "Create your free account; share your idea, track your progress and join the Messta ecosystem.",
+        "Create your free account; share your idea, track your progress and join the Invenimus ecosystem.",
       perks: [
         "Set up in minutes",
         "Get your idea straight to the team",
@@ -1032,7 +1032,7 @@ const en: MesstaCopy = {
 // ————————————————————————————————————————————————————————————
 // ALMANCA
 // ————————————————————————————————————————————————————————————
-const de: MesstaCopy = {
+const de: InvenimusCopy = {
   nav: {
     links: [
       { label: "Arbeiten", href: "#work" },
@@ -1061,7 +1061,7 @@ const de: MesstaCopy = {
     titleLead: "Wir machen aus Ideen",
     titleAccent: "Produkte, die live gehen.",
     descA:
-      "Messta ist ein Venture Studio, das Strategie, Design und Engineering vereint, um Technologie- und Startup-Ideen ",
+      "Invenimus ist ein Venture Studio, das Strategie, Design und Engineering vereint, um Technologie- und Startup-Ideen ",
     descStrong: "innerhalb von Wochen live zu bringen",
     descB: ".",
     ctaPrimary: "Idee vorstellen",
@@ -1252,7 +1252,7 @@ const de: MesstaCopy = {
     items: [
       {
         quote:
-          "Von der Idee zum veröffentlichten Produkt in 9 Wochen. Messta arbeitete wie ein echter Mitgründer, nicht wie eine Agentur.",
+          "Von der Idee zum veröffentlichten Produkt in 9 Wochen. Invenimus arbeitete wie ein echter Mitgründer, nicht wie eine Agentur.",
         name: "Elif Demir",
         role: "Gründerin, Fintra",
       },
@@ -1349,7 +1349,7 @@ const de: MesstaCopy = {
     badge: "Los geht's",
     title: "Hast du eine Idee?",
     desc: "Lass uns die Idee in deinem Kopf in unter 12 Monaten in ein Produkt verwandeln, das echte Nutzer nutzen. Das erste Gespräch ist kostenlos.",
-    email: "hello@messta.studio",
+    email: "hello@invenimus.studio",
     backToTop: "Nach oben",
     formName: "Vor- und Nachname",
     formEmail: "E-Mail",
@@ -1369,7 +1369,7 @@ const de: MesstaCopy = {
       { label: "Team", href: "#team" },
       { label: "Kontakt", href: "#contact" },
     ],
-    rights: "Messta. Istanbul — Berlin.",
+    rights: "Invenimus. Istanbul — Berlin.",
     location: "Istanbul — Berlin",
   },
   auth: {
@@ -1400,7 +1400,7 @@ const de: MesstaCopy = {
       eyebrow: "Werde Teil",
       brandTitle: "Das nächste Venture könnte deins sein.",
       brandDesc:
-        "Erstelle dein kostenloses Konto; teile deine Idee, verfolge deinen Fortschritt und werde Teil des Messta-Ökosystems.",
+        "Erstelle dein kostenloses Konto; teile deine Idee, verfolge deinen Fortschritt und werde Teil des Invenimus-Ökosystems.",
       perks: [
         "In Minuten eingerichtet",
         "Bring deine Idee direkt zum Team",
@@ -1432,10 +1432,10 @@ const de: MesstaCopy = {
   },
 };
 
-export const MESSTA_COPY: Record<Locale, MesstaCopy> = { tr, en, de };
+export const INVENIMUS_COPY: Record<Locale, InvenimusCopy> = { tr, en, de };
 
-export function getMesstaCopy(locale: Locale): MesstaCopy {
-  return MESSTA_COPY[locale] ?? MESSTA_COPY.tr;
+export function getInvenimusCopy(locale: Locale): InvenimusCopy {
+  return INVENIMUS_COPY[locale] ?? INVENIMUS_COPY.tr;
 }
 
 // Çok dilli JSON string ({"tr":"","en":"","de":""}) içinden geçerli dili seçer.

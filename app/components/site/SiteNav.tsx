@@ -5,12 +5,12 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Plus, Shield, LogOut, LogIn } from "lucide-react";
 import Magnetic from "../motion/Magnetic";
 import LangSwitcher from "./LangSwitcher";
-import { useMesstaCopy } from "@/app/lib/useMesstaCopy";
+import { useInvenimusCopy } from "@/app/lib/useInvenimusCopy";
 import { logout } from "@/app/(components)/(authentication-layout)/authentication/actions";
 
 // KOTA tarzı üst bar + tam ekran flyout menü.
-// Logo (M mark) + mıknatıslı CTA + dil değiştirici + hamburger.
-// Metinler messta-content.ts sözlüğünden (TR/EN/DE) gelir.
+// Logo (I mark) + mıknatıslı CTA + dil değiştirici + hamburger.
+// Metinler invenimus-content.ts sözlüğünden (TR/EN/DE) gelir.
 // Menü açıkken sayfa scroll kilitlenir, Hizmetler alt menüsü açılıp kapanır.
 
 function ArrowIcon({ className }: { className?: string }) {
@@ -24,13 +24,13 @@ function ArrowIcon({ className }: { className?: string }) {
   );
 }
 
-// Messta "M" monogramı — köşeleri yuvarlatılmış kare içinde keskin M harfi.
+// Invenimus "I" monogramı — köşeleri yuvarlatılmış kare içinde serifli I harfi.
 function LogoMark({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
       <rect width="64" height="64" rx="16" fill="currentColor" />
       <path
-        d="M13 46V18h9l10 14 10-14h9v28h-9.5V31.5L33 45h-2L20.5 31.5V46H13Z"
+        d="M20 18H44V23H36V41H44V46H20V41H28V23H20V18Z"
         fill="#efefef"
       />
     </svg>
@@ -54,7 +54,7 @@ export default function SiteNav({
   const [sub, setSub] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const reduce = useReducedMotion();
-  const { copy } = useMesstaCopy();
+  const { copy } = useInvenimusCopy();
   const nav = copy.nav;
 
   // Flyout menü öğeleri: düz linkler + "Hizmetler" alt menüsü (Studio'dan sonra).
@@ -94,12 +94,12 @@ export default function SiteNav({
       >
         <a
           href="#top"
-          aria-label="Messta"
+          aria-label="Invenimus"
           className="flex items-center gap-2.5 text-ink"
         >
           <LogoMark className="h-8 w-8 transition-transform duration-500 hover:rotate-[360deg]" />
           <span className="font-syne text-lg font-extrabold tracking-tight">
-            messta<span className="text-kotapink">.</span>
+            invenimus<span className="text-kotapink">.</span>
           </span>
         </a>
 

@@ -36,7 +36,7 @@ export const lucia = new Lucia(adapter, {
       roleGayrimenkul:databaseUserAttributes.roleGayrimenkul,
       agencyId:databaseUserAttributes.agencyId,
       agencyName:databaseUserAttributes.agencyName,
-      messtaRole:databaseUserAttributes.messtaRole,
+      invenimusRole:databaseUserAttributes.invenimusRole,
     };
   },
 });
@@ -68,7 +68,7 @@ interface DatabaseUserAttributes {
   roleGayrimenkul: string | null;
   agencyId: string | null;
   agencyName: string | null;
-  messtaRole: "ADMIN" | "EDITOR" | "VIEWER" | null;
+  invenimusRole: "ADMIN" | "EDITOR" | "VIEWER" | null;
 }
 
 export const google = new Google(

@@ -12,6 +12,7 @@ import {
   Handshake,
   Users,
   LayoutList,
+  LayoutTemplate,
   Shield,
   Menu,
   X,
@@ -21,10 +22,11 @@ import {
 // adminOnly linkler yalnızca ADMIN rolünde görünür.
 const NAV = [
   { href: "/admin", label: "Panel", icon: LayoutDashboard, exact: true },
+  { href: "/admin/pages", label: "Sayfa İçeriği (CMS)", icon: LayoutTemplate },
   { href: "/admin/leads", label: "Başvurular", icon: Inbox },
   { href: "/admin/investors", label: "Yatırımcılar", icon: Handshake },
   { href: "/admin/team", label: "Kadromuz", icon: Users },
-  { href: "/admin/content", label: "İçerik (CMS)", icon: LayoutList },
+  { href: "/admin/content", label: "İçerik (portföy/SSS)", icon: LayoutList },
   { href: "/admin/users", label: "Kullanıcılar & Roller", icon: Shield, adminOnly: true },
 ];
 
@@ -49,7 +51,7 @@ export default function AdminSidebar({
       {/* Mobil üst bar */}
       <div className="flex items-center justify-between border-b border-white/10 bg-ink px-4 py-3 text-paper lg:hidden">
         <span className="font-syne text-lg font-extrabold">
-          messta<span className="text-kotapink">.</span> admin
+          invenimus<span className="text-kotapink">.</span> admin
         </span>
         <button
           onClick={() => setOpen((v) => !v)}
@@ -68,7 +70,7 @@ export default function AdminSidebar({
         <div className="flex h-full flex-col">
           <div className="hidden items-center gap-2 px-6 py-6 lg:flex">
             <span className="font-syne text-xl font-extrabold tracking-tight">
-              messta<span className="text-kotapink">.</span>
+              invenimus<span className="text-kotapink">.</span>
             </span>
             <span className="rounded-full bg-acid px-2 py-0.5 text-[11px] font-bold text-ink">
               admin

@@ -5,12 +5,12 @@ import Link from "@/app/components/LocaleLink";
 import { useRouter } from "next/navigation";
 import { ArrowUpRight, Check } from "lucide-react";
 import { signUp } from "../(components)/(authentication-layout)/authentication/sign-up/actions";
-import { useMesstaCopy } from "@/app/lib/useMesstaCopy";
+import { useInvenimusCopy } from "@/app/lib/useInvenimusCopy";
 import LangSwitcher from "@/app/components/site/LangSwitcher";
 
 export default function RegisterForm({ redirect = "/" }: { redirect?: string }) {
   const router = useRouter();
-  const { copy } = useMesstaCopy();
+  const { copy } = useInvenimusCopy();
   const a = copy.auth;
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -48,7 +48,7 @@ export default function RegisterForm({ redirect = "/" }: { redirect?: string }) 
 
   return (
     <div className="flex min-h-screen flex-col bg-paper font-sans text-ink lg:flex-row">
-      {/* Sol: marka paneli (KOTA/Messta) */}
+      {/* Sol: marka paneli (KOTA/Invenimus) */}
       <div className="relative hidden overflow-hidden bg-ink text-paper lg:flex lg:w-1/2">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0 bg-tech-grid opacity-20" />
@@ -59,7 +59,7 @@ export default function RegisterForm({ redirect = "/" }: { redirect?: string }) 
           <Link href="/" className="inline-flex w-fit items-center gap-2.5">
             <LogoMark className="h-8 w-8 text-kotapink" />
             <span className="font-syne text-lg font-extrabold tracking-tight">
-              messta<span className="text-kotapink">.</span>
+              invenimus<span className="text-kotapink">.</span>
             </span>
           </Link>
 
@@ -83,7 +83,7 @@ export default function RegisterForm({ redirect = "/" }: { redirect?: string }) 
             </ul>
           </div>
 
-          <p className="text-xs text-paper/40">© {2026} Messta — {copy.footer.location}</p>
+          <p className="text-xs text-paper/40">© {2026} Invenimus — {copy.footer.location}</p>
         </div>
       </div>
 
@@ -97,7 +97,7 @@ export default function RegisterForm({ redirect = "/" }: { redirect?: string }) 
           <Link href="/" className="mb-8 inline-flex items-center gap-2.5 lg:hidden">
             <LogoMark className="h-8 w-8 text-ink" />
             <span className="font-syne text-lg font-extrabold tracking-tight">
-              messta<span className="text-kotapink">.</span>
+              invenimus<span className="text-kotapink">.</span>
             </span>
           </Link>
 
@@ -198,13 +198,13 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-// Messta "M" monogramı (kare currentColor, M paper).
+// Invenimus "M" monogramı (kare currentColor, M paper).
 function LogoMark({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
       <rect width="64" height="64" rx="16" fill="currentColor" />
       <path
-        d="M13 46V18h9l10 14 10-14h9v28h-9.5V31.5L33 45h-2L20.5 31.5V46H13Z"
+        d="M20 18H44V23H36V41H44V46H20V41H28V23H20V18Z"
         fill="#efefef"
       />
     </svg>

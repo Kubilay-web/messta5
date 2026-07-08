@@ -4,7 +4,7 @@
 import prisma from "@/app/lib/prisma";
 import Link from "next/link";
 import { validateRequest } from "@/app/auth";
-import { hasMesstaRole } from "@/app/lib/messta-auth";
+import { hasInvenimusRole } from "@/app/lib/invenimus-auth";
 import { PageHeader, Card, EmptyState, formatDate } from "../_ui";
 import LeadRow, { type LeadDTO } from "./LeadRow";
 
@@ -27,9 +27,9 @@ export default async function LeadsPage({
   const active = status && status !== "ALL" ? status : "ALL";
 
   const { user } = await validateRequest();
-  const canEdit = hasMesstaRole(user?.messtaRole, "EDITOR");
+  const canEdit = hasInvenimusRole(user?.invenimusRole, "EDITOR");
 
-  const leads = await prisma.messtaLead.findMany({
+  const leads = await prisma.invenimusLead.findMany({
     where: active === "ALL" ? {} : { status: active },
     orderBy: { createdAt: "desc" },
     take: 200,

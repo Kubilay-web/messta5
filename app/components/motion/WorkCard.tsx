@@ -18,12 +18,14 @@ export default function WorkCard({
   year,
   color,
   ink = "#0a0a0a",
+  image,
 }: {
   name: string;
   tag: string;
   year: string;
   color: string;
   ink?: string;
+  image?: string;
 }) {
   const ref = useRef<HTMLAnchorElement>(null);
   const reduce = useReducedMotion();
@@ -68,12 +70,23 @@ export default function WorkCard({
       className="group block [transform-style:preserve-3d]"
     >
       <div
-        className="flex aspect-[4/3] items-end overflow-hidden rounded-[1.25rem] p-7"
+        className="relative flex aspect-[4/3] items-end overflow-hidden rounded-[1.25rem] p-7"
         style={{ backgroundColor: color }}
       >
+        {image && (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={image}
+              alt={name}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+          </>
+        )}
         <motion.span
-          style={{ x: labelX, y: labelY, color: ink }}
-          className="font-syne text-3xl font-extrabold lowercase tracking-tight"
+          style={{ x: labelX, y: labelY, color: image ? "#ffffff" : ink }}
+          className="relative font-syne text-3xl font-extrabold lowercase tracking-tight"
         >
           {name}
         </motion.span>

@@ -1,10 +1,10 @@
 // app/admin/users/page.tsx
-// Kullanıcılar & Roller — Messta admin yetki rolü yönetimi. Yalnızca ADMIN.
+// Kullanıcılar & Roller — Invenimus admin yetki rolü yönetimi. Yalnızca ADMIN.
 
 import prisma from "@/app/lib/prisma";
 import Link from "next/link";
 import { validateRequest } from "@/app/auth";
-import { hasMesstaRole } from "@/app/lib/messta-auth";
+import { hasInvenimusRole } from "@/app/lib/invenimus-auth";
 import { PageHeader, Card, EmptyState } from "../_ui";
 import UserRow, { type UserDTO } from "./UserRow";
 
@@ -18,7 +18,7 @@ export default async function UsersPage({
   const { user: me } = await validateRequest();
 
   // Sayfa seviyesinde de guard: yalnızca ADMIN.
-  if (!hasMesstaRole(me?.messtaRole, "ADMIN")) {
+  if (!hasInvenimusRole(me?.invenimusRole, "ADMIN")) {
     return (
       <div>
         <PageHeader title="Kullanıcılar & Roller" />
@@ -43,14 +43,14 @@ export default async function UsersPage({
   // Önce yetkili olanlar, sonra diğerleri.
   const [staff, others] = await Promise.all([
     prisma.user.findMany({
-      where: { ...where, messtaRole: { not: null } },
-      select: { id: true, name: true, username: true, email: true, avatarUrl: true, messtaRole: true },
+      where: { ...where, invenimusRole: { not: null } },
+      select: { id: true, name: true, username: true, email: true, avatarUrl: true, invenimusRole: true },
       orderBy: { createdAt: "desc" },
       take: 100,
     }),
     prisma.user.findMany({
-      where: { ...where, messtaRole: null },
-      select: { id: true, name: true, username: true, email: true, avatarUrl: true, messtaRole: true },
+      where: { ...where, invenimusRole: null },
+      select: { id: true, name: true, username: true, email: true, avatarUrl: true, invenimusRole: true },
       orderBy: { createdAt: "desc" },
       take: 100,
     }),
@@ -61,7 +61,7 @@ export default async function UsersPage({
     name: u.name || u.username || "",
     email: u.email || "",
     avatarUrl: u.avatarUrl,
-    messtaRole: u.messtaRole,
+    invenimusRole: u.invenimusRole,
   });
 
   return (
@@ -109,7 +109,7 @@ export default async function UsersPage({
       )}
 
       <p className="mt-6 text-xs text-ink/40">
-        Not: Buradaki roller yalnızca Messta admin panelini kapsar; kullanıcıların genel
+        Not: Buradaki roller yalnızca Invenimus admin panelini kapsar; kullanıcıların genel
         uygulama rolüne (mağaza vb.) dokunmaz.{" "}
         <Link href="/admin" className="text-kotapink hover:underline">
           Panele dön

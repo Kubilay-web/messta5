@@ -18,7 +18,7 @@ export type Brand = {
 const ECOM: Record<Locale, Brand> = {
   tr: {
     name: SITE_NAME,
-    title: "messta",
+    title: "invenimus",
     description:
       "Özenle seçilmiş ürünleri keşfedin. Hızlı kargo, 256-bit SSL güvenli ödeme ve 14 gün koşulsuz iade. Türkçe, İngilizce ve Almanca alışveriş deneyimi.",
     keywords: ["online alışveriş", "e-ticaret", "hızlı kargo", "güvenli ödeme", "mağaza"],

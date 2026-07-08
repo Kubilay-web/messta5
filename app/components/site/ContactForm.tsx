@@ -8,11 +8,11 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowUpRight, CheckCircle2, Lock } from "lucide-react";
-import { submitLead, type ActionResult } from "@/app/lib/messta-actions";
-import type { MesstaCopy } from "@/app/components/site-i18n/messta-content";
+import { submitLead, type ActionResult } from "@/app/lib/invenimus-actions";
+import type { InvenimusCopy } from "@/app/components/site-i18n/invenimus-content";
 
 const initial: ActionResult = { ok: false };
-const DRAFT_KEY = "messta:leadDraft";
+const DRAFT_KEY = "invenimus:leadDraft";
 
 export default function ContactForm({
   copy,
@@ -22,7 +22,7 @@ export default function ContactForm({
   redirectTo = "/#contact",
   gateHint,
 }: {
-  copy: MesstaCopy["contact"];
+  copy: InvenimusCopy["contact"];
   isLoggedIn: boolean;
   defaultName?: string;
   defaultEmail?: string;

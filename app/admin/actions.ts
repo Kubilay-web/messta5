@@ -8,16 +8,16 @@
 import { revalidatePath } from "next/cache";
 import prisma from "@/app/lib/prisma";
 import {
-  requireMesstaRole,
-  isMesstaRole,
-  type MesstaRole,
-} from "@/app/lib/messta-auth";
+  requireInvenimusRole,
+  isInvenimusRole,
+  type InvenimusRole,
+} from "@/app/lib/invenimus-auth";
 
 export type AdminResult = { ok: boolean; message?: string };
 
 // İçerik/başvuru mutasyonları EDITOR+ ister; kullanıcı/rol yönetimi ADMIN ister.
-const requireEditor = () => requireMesstaRole("EDITOR");
-const requireAdmin = () => requireMesstaRole("ADMIN");
+const requireEditor = () => requireInvenimusRole("EDITOR");
+const requireAdmin = () => requireInvenimusRole("ADMIN");
 
 function revalidateAdmin(path?: string) {
   revalidatePath("/admin");
@@ -31,21 +31,21 @@ const LEAD_STATUSES = ["NEW", "READ", "CONTACTED", "ARCHIVED"];
 export async function updateLeadStatus(id: string, status: string): Promise<AdminResult> {
   await requireEditor();
   if (!LEAD_STATUSES.includes(status)) return { ok: false, message: "Geçersiz durum." };
-  await prisma.messtaLead.update({ where: { id }, data: { status } });
+  await prisma.invenimusLead.update({ where: { id }, data: { status } });
   revalidateAdmin("/admin/leads");
   return { ok: true };
 }
 
 export async function updateLeadNotes(id: string, notes: string): Promise<AdminResult> {
   await requireEditor();
-  await prisma.messtaLead.update({ where: { id }, data: { notes: notes || null } });
+  await prisma.invenimusLead.update({ where: { id }, data: { notes: notes || null } });
   revalidateAdmin("/admin/leads");
   return { ok: true };
 }
 
 export async function deleteLead(id: string): Promise<AdminResult> {
   await requireEditor();
-  await prisma.messtaLead.delete({ where: { id } });
+  await prisma.invenimusLead.delete({ where: { id } });
   revalidateAdmin("/admin/leads");
   return { ok: true };
 }
@@ -56,21 +56,21 @@ const INVESTOR_STATUSES = ["NEW", "REVIEWING", "MATCHED", "REJECTED", "ARCHIVED"
 export async function updateInvestorStatus(id: string, status: string): Promise<AdminResult> {
   await requireEditor();
   if (!INVESTOR_STATUSES.includes(status)) return { ok: false, message: "Geçersiz durum." };
-  await prisma.messtaInvestorApplication.update({ where: { id }, data: { status } });
+  await prisma.invenimusInvestorApplication.update({ where: { id }, data: { status } });
   revalidateAdmin("/admin/investors");
   return { ok: true };
 }
 
 export async function updateInvestorNotes(id: string, notes: string): Promise<AdminResult> {
   await requireEditor();
-  await prisma.messtaInvestorApplication.update({ where: { id }, data: { notes: notes || null } });
+  await prisma.invenimusInvestorApplication.update({ where: { id }, data: { notes: notes || null } });
   revalidateAdmin("/admin/investors");
   return { ok: true };
 }
 
 export async function deleteInvestor(id: string): Promise<AdminResult> {
   await requireEditor();
-  await prisma.messtaInvestorApplication.delete({ where: { id } });
+  await prisma.invenimusInvestorApplication.delete({ where: { id } });
   revalidateAdmin("/admin/investors");
   return { ok: true };
 }
@@ -103,9 +103,9 @@ export async function saveTeamMember(_prev: AdminResult, fd: FormData): Promise<
   };
 
   if (id) {
-    await prisma.messtaTeamMember.update({ where: { id }, data });
+    await prisma.invenimusTeamMember.update({ where: { id }, data });
   } else {
-    await prisma.messtaTeamMember.create({ data });
+    await prisma.invenimusTeamMember.create({ data });
   }
   revalidateAdmin("/admin/team");
   return { ok: true };
@@ -113,7 +113,7 @@ export async function saveTeamMember(_prev: AdminResult, fd: FormData): Promise<
 
 export async function deleteTeamMember(id: string): Promise<AdminResult> {
   await requireEditor();
-  await prisma.messtaTeamMember.delete({ where: { id } });
+  await prisma.invenimusTeamMember.delete({ where: { id } });
   revalidateAdmin("/admin/team");
   return { ok: true };
 }
@@ -129,10 +129,17 @@ export async function saveContentItem(_prev: AdminResult, fd: FormData): Promise
 
   // meta serbest JSON (yıl, renk, tag, rol, metrik...). Geçersizse {} kaydet.
   let meta = String(fd.get("meta") ?? "").trim() || "{}";
+  let metaObj: Record<string, unknown>;
   try {
-    JSON.parse(meta);
+    metaObj = JSON.parse(meta);
   } catch {
     return { ok: false, message: "Meta alanı geçerli JSON olmalı." };
+  }
+  // ImageUpload'tan gelen görsel URL'sini meta.image'e işle (varsa).
+  const image = String(fd.get("image") ?? "").trim();
+  if (image) {
+    metaObj = { ...metaObj, image };
+    meta = JSON.stringify(metaObj);
   }
 
   const data = {
@@ -145,9 +152,9 @@ export async function saveContentItem(_prev: AdminResult, fd: FormData): Promise
   };
 
   if (id) {
-    await prisma.messtaContentItem.update({ where: { id }, data });
+    await prisma.invenimusContentItem.update({ where: { id }, data });
   } else {
-    await prisma.messtaContentItem.create({ data });
+    await prisma.invenimusContentItem.create({ data });
   }
   revalidateAdmin("/admin/content");
   return { ok: true };
@@ -155,20 +162,20 @@ export async function saveContentItem(_prev: AdminResult, fd: FormData): Promise
 
 export async function deleteContentItem(id: string): Promise<AdminResult> {
   await requireEditor();
-  await prisma.messtaContentItem.delete({ where: { id } });
+  await prisma.invenimusContentItem.delete({ where: { id } });
   revalidateAdmin("/admin/content");
   return { ok: true };
 }
 
 // —————————————————————— USERS & ROLES ——————————————————————
-// Admin panelinin kendi yetki rolü (MesstaRole). "NONE" → panele erişim kaldırılır.
+// Admin panelinin kendi yetki rolü (InvenimusRole). "NONE" → panele erişim kaldırılır.
 // Genel User.role'e (mağaza/uygulama rolü) burada dokunulmaz.
-export async function updateUserMesstaRole(
+export async function updateUserInvenimusRole(
   id: string,
-  role: MesstaRole | "NONE"
+  role: InvenimusRole | "NONE"
 ): Promise<AdminResult> {
   const admin = await requireAdmin();
-  if (role !== "NONE" && !isMesstaRole(role)) {
+  if (role !== "NONE" && !isInvenimusRole(role)) {
     return { ok: false, message: "Geçersiz rol." };
   }
   // Yönetici kendi ADMIN yetkisini düşüremez/kaldıramaz (kilitlenmeyi önler).
@@ -177,7 +184,7 @@ export async function updateUserMesstaRole(
   }
   await prisma.user.update({
     where: { id },
-    data: { messtaRole: role === "NONE" ? null : role },
+    data: { invenimusRole: role === "NONE" ? null : role },
   });
   revalidateAdmin("/admin/users");
   return { ok: true };

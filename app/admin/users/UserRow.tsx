@@ -1,22 +1,22 @@
 "use client";
 
 // app/admin/users/UserRow.tsx
-// Tek kullanıcı: Messta yetki rolünü (ADMIN/EDITOR/VIEWER/NONE) değiştirir.
+// Tek kullanıcı: Invenimus yetki rolünü (ADMIN/EDITOR/VIEWER/NONE) değiştirir.
 
 import { useState, useTransition } from "react";
 import { Check } from "lucide-react";
-import { updateUserMesstaRole } from "../actions";
-import type { MesstaRole } from "@/app/lib/messta-auth";
+import { updateUserInvenimusRole } from "../actions";
+import type { InvenimusRole } from "@/app/lib/invenimus-auth";
 
 export type UserDTO = {
   id: string;
   name: string;
   email: string;
   avatarUrl: string | null;
-  messtaRole: string | null;
+  invenimusRole: string | null;
 };
 
-const OPTIONS: { value: MesstaRole | "NONE"; label: string; tone: string }[] = [
+const OPTIONS: { value: InvenimusRole | "NONE"; label: string; tone: string }[] = [
   { value: "NONE", label: "Erişim yok", tone: "text-ink/40" },
   { value: "VIEWER", label: "İzleyici", tone: "text-blue-600" },
   { value: "EDITOR", label: "Editör", tone: "text-amber-600" },
@@ -24,19 +24,19 @@ const OPTIONS: { value: MesstaRole | "NONE"; label: string; tone: string }[] = [
 ];
 
 export default function UserRow({ user, isSelf }: { user: UserDTO; isSelf: boolean }) {
-  const [role, setRole] = useState<MesstaRole | "NONE">(
-    (user.messtaRole as MesstaRole) ?? "NONE"
+  const [role, setRole] = useState<InvenimusRole | "NONE">(
+    (user.invenimusRole as InvenimusRole) ?? "NONE"
   );
   const [pending, start] = useTransition();
   const [err, setErr] = useState<string | null>(null);
 
-  const change = (next: MesstaRole | "NONE") => {
+  const change = (next: InvenimusRole | "NONE") => {
     if (next === role) return;
     const prev = role;
     setRole(next);
     setErr(null);
     start(async () => {
-      const res = await updateUserMesstaRole(user.id, next);
+      const res = await updateUserInvenimusRole(user.id, next);
       if (!res.ok) {
         setRole(prev);
         setErr(res.message ?? "Hata");

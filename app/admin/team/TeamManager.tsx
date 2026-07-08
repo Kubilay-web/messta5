@@ -6,6 +6,7 @@
 import { useActionState, useEffect, useState, useTransition } from "react";
 import { Plus, Pencil, Trash2, X, Save, EyeOff } from "lucide-react";
 import { saveTeamMember, deleteTeamMember, type AdminResult } from "../actions";
+import ImageUpload from "../_components/ImageUpload";
 
 type Lang = { tr: string; en: string; de: string };
 export type TeamDTO = {
@@ -144,8 +145,15 @@ export default function TeamManager({
             <MultiLang label="Rol / Başlık" base="role" value={editing.role} />
             <MultiLang label="Kısa biyografi" base="bio" value={editing.bio} textarea />
 
-            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <Field label="Avatar URL" name="avatarUrl" defaultValue={editing.avatarUrl ?? ""} />
+            <div className="mt-4">
+              <ImageUpload
+                name="avatarUrl"
+                defaultValue={editing.avatarUrl ?? ""}
+                label="Avatar"
+                folder="team"
+              />
+            </div>
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="LinkedIn" name="linkedin" defaultValue={editing.linkedin ?? ""} />
               <Field label="Twitter/X" name="twitter" defaultValue={editing.twitter ?? ""} />
             </div>

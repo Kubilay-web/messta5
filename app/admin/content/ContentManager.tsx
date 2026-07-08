@@ -8,6 +8,17 @@ import { useActionState, useEffect, useState, useTransition } from "react";
 import { Plus, Pencil, Trash2, X, Save, EyeOff } from "lucide-react";
 import { saveContentItem, deleteContentItem, type AdminResult } from "../actions";
 import { KINDS, kindLabel } from "./kinds";
+import ImageUpload from "../_components/ImageUpload";
+
+// meta JSON'undan görsel URL'sini güvenli oku (venture/testimonial görseli).
+function metaImage(meta: string): string {
+  try {
+    const o = JSON.parse(meta || "{}");
+    return typeof o.image === "string" ? o.image : "";
+  } catch {
+    return "";
+  }
+}
 
 type Lang = { tr: string; en: string; de: string };
 export type ContentDTO = {
@@ -158,6 +169,15 @@ export default function ContentManager({
 
             <MultiLang label="Başlık" base="title" value={editing.title} />
             <MultiLang label="Metin / açıklama" base="body" value={editing.body} textarea />
+
+            <div className="mt-4">
+              <ImageUpload
+                name="image"
+                defaultValue={metaImage(editing.meta)}
+                label="Görsel (opsiyonel — meta.image olarak kaydedilir)"
+                folder="content"
+              />
+            </div>
 
             <label className="mt-4 block">
               <span className="mb-1 block text-xs font-medium text-ink/50">

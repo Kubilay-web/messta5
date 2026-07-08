@@ -4,7 +4,7 @@
 import prisma from "@/app/lib/prisma";
 import Link from "next/link";
 import { validateRequest } from "@/app/auth";
-import { hasMesstaRole } from "@/app/lib/messta-auth";
+import { hasInvenimusRole } from "@/app/lib/invenimus-auth";
 import { PageHeader, unpackLang } from "../_ui";
 import ContentManager, { type ContentDTO } from "./ContentManager";
 import { KINDS } from "./kinds";
@@ -21,9 +21,9 @@ export default async function ContentPage({
   const active = validKind ? (kind as string) : "ALL";
 
   const { user } = await validateRequest();
-  const canEdit = hasMesstaRole(user?.messtaRole, "EDITOR");
+  const canEdit = hasInvenimusRole(user?.invenimusRole, "EDITOR");
 
-  const items = await prisma.messtaContentItem.findMany({
+  const items = await prisma.invenimusContentItem.findMany({
     where: active === "ALL" ? {} : { kind: active },
     orderBy: [{ kind: "asc" }, { order: "asc" }],
     take: 300,
