@@ -76,6 +76,9 @@ export default async function Page() {
   // Panele erişimi olan kullanıcıya (messtaRole atanmış) admin kısayolu göster.
   const { user } = await validateRequest();
   const showAdmin = hasMesstaRole(user?.messtaRole, "VIEWER");
+  const isLoggedIn = !!user;
+  const authName = user?.displayName || user?.username || "";
+  const authEmail = user?.email || "";
 
   // Kadromuz: admin panelinden yayınlanan üyeler varsa onları kullan, yoksa statik.
   const dbTeam = await prisma.messtaTeamMember
@@ -97,7 +100,7 @@ export default async function Page() {
     <SmoothScroll>
       <ScrollProgress />
       <CustomCursor />
-      <SiteNav showAdmin={showAdmin} />
+      <SiteNav showAdmin={showAdmin} isLoggedIn={isLoggedIn} />
 
       <main
         id="top"
@@ -467,7 +470,14 @@ export default async function Page() {
                 </h3>
                 <p className="mt-2 text-sm text-paper/55">{copy.investors.formSub}</p>
                 <div className="mt-6">
-                  <InvestorForm copy={copy.investors} />
+                  <InvestorForm
+                    copy={copy.investors}
+                    isLoggedIn={isLoggedIn}
+                    defaultName={authName}
+                    defaultEmail={authEmail}
+                    redirectTo="/#investors"
+                    gateHint={copy.auth.gateHint}
+                  />
                 </div>
               </div>
             </Reveal>
@@ -623,7 +633,14 @@ export default async function Page() {
 
             {/* Çalışan iletişim formu */}
             <Reveal delay={0.3}>
-              <ContactForm copy={copy.contact} />
+              <ContactForm
+                copy={copy.contact}
+                isLoggedIn={isLoggedIn}
+                defaultName={authName}
+                defaultEmail={authEmail}
+                redirectTo="/#contact"
+                gateHint={copy.auth.gateHint}
+              />
             </Reveal>
 
             <Reveal delay={0.35}>

@@ -131,6 +131,9 @@ export interface MesstaCopy {
   auth: {
     backHome: string;
     unexpectedError: string;
+    gateHint: string;
+    logout: string;
+    signInCta: string;
     login: {
       eyebrow: string;
       brandTitle: string;
@@ -566,6 +569,9 @@ const tr: MesstaCopy = {
   auth: {
     backHome: "← Ana sayfaya dön",
     unexpectedError: "Beklenmeyen bir hata oluştu.",
+    gateHint: "Göndermek için giriş yapman gerekir — formu doldur, seni girişe yönlendirelim.",
+    logout: "Çıkış yap",
+    signInCta: "Giriş yap",
     login: {
       eyebrow: "Tekrar hoş geldin",
       brandTitle: "Fikirler burada çalışan ürünlere dönüşür.",
@@ -966,6 +972,9 @@ const en: MesstaCopy = {
   auth: {
     backHome: "← Back to home",
     unexpectedError: "An unexpected error occurred.",
+    gateHint: "You need to sign in to submit — fill the form and we'll take you to login.",
+    logout: "Log out",
+    signInCta: "Sign in",
     login: {
       eyebrow: "Welcome back",
       brandTitle: "Where ideas turn into products that ship.",
@@ -1366,6 +1375,9 @@ const de: MesstaCopy = {
   auth: {
     backHome: "← Zurück zur Startseite",
     unexpectedError: "Ein unerwarteter Fehler ist aufgetreten.",
+    gateHint: "Zum Absenden musst du dich anmelden — fülle das Formular aus, wir leiten dich weiter.",
+    logout: "Abmelden",
+    signInCta: "Anmelden",
     login: {
       eyebrow: "Willkommen zurück",
       brandTitle: "Wo aus Ideen Produkte werden, die live gehen.",

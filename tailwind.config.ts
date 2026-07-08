@@ -69,6 +69,14 @@ module.exports = {
           800: "#383853",
           900: "#323251",
         },
+        // Messta venture studio paleti — ÜST SEVİYE (bg-ink, text-paper, bg-acid,
+        // text-kotapink, border-acid... üretilir). Aşağıdaki iç içe `colors` bloğu
+        // bunları üretmiyordu; buraya taşındı.
+        ink: "#0b0b0b",
+        paper: "#efefef",
+        acid: "#d8f34e",
+        kotapink: "#f74ea1",
+        "teal-light": "#7ae3c3",
         //Chat
               backgroundImage: {
         "chat-background": "url('/chat/chat-bg.png')",

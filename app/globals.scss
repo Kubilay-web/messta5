@@ -6,153 +6,122 @@
 @forward "../node_modules/simplebar-react/dist/simplebar.min.css";
 
 
-// .profile-timeline .profile-activity-media img {
-//     @apply w-[4rem] h-[3rem] #{!important};
-// }
+// ————————————————————————————————————————————————————————————
+// Messta / startup studio landing — animasyonlar & yardımcı sınıflar.
+// (Tailwind paleti config'de; bunlar keyframe/gradient/grid gibi düz CSS.)
+// ————————————————————————————————————————————————————————————
 
-// .top-nft img {
-//     @apply w-[2.5rem] h-[2.5rem] #{!important};
-// }
-// .w-\[88\%\] {
-//     width: 88%;
-// }
-// //.swiper-slide {
-// //    [data-nimg="fill"] {
-// //        width: 100% !important;
-// //    }
-// //}
-// .image-container {
-//     img {
-//       @apply w-full h-auto #{!important};
-//     }
-//   }
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
 
-//   .header-autoComplete {
-//     @apply h-[35px] #{!important};
-//   }
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
 
+@keyframes pulse-ring {
+  0%   { transform: translate(-50%, -50%) scale(0.8); opacity: 0.6; }
+  100% { transform: translate(-50%, -50%) scale(1.1); opacity: 0; }
+}
 
+/* --- Startup studio landing animasyonları --- */
+@keyframes floaty {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(24px, -34px) scale(1.1); }
+}
+@keyframes floaty-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(-28px, 26px) scale(1.14); }
+}
+@keyframes floaty-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(18px, 28px) scale(0.92); }
+}
+@keyframes grid-pan {
+  from { background-position: 0 0; }
+  to   { background-position: 44px 44px; }
+}
+@keyframes aurora {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes marquee-up {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-50%); }
+}
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
+}
+@keyframes spin-slow-kf {
+  to { transform: rotate(360deg); }
+}
 
+.animate-ticker  { animation: ticker 120s linear infinite; }
+.animate-ticker:hover { animation-play-state: paused; }
+.animate-blink   { animation: blink 2s ease infinite; }
+.pulse-ring-1    { animation: pulse-ring 3s ease-out infinite; }
+.pulse-ring-2    { animation: pulse-ring 3s ease-out infinite 0.6s; }
+.pulse-ring-3    { animation: pulse-ring 3s ease-out infinite 1.2s; }
+.pulse-ring-4    { animation: pulse-ring 3s ease-out infinite 1.8s; }
 
+.animate-floaty   { animation: floaty 10s ease-in-out infinite; }
+.animate-floaty-2 { animation: floaty-2 13s ease-in-out infinite; }
+.animate-floaty-3 { animation: floaty-3 16s ease-in-out infinite; }
+.animate-marquee-up { animation: marquee-up 18s linear infinite; }
+.animate-spin-slow-kf { animation: spin-slow-kf 22s linear infinite; }
 
-  
-// @keyframes ticker {
-//   from { transform: translateX(0); }
-//   to   { transform: translateX(-50%); }
-// }
+.bg-tech-grid {
+  background-image:
+    linear-gradient(to right, rgba(11, 11, 11, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(11, 11, 11, 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+  animation: grid-pan 8s linear infinite;
+}
+.text-aurora {
+  background-image: linear-gradient(110deg, #0b0b0b 20%, #f74ea1 40%, #d8f34e 60%, #0b0b0b 80%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 6s linear infinite;
+}
 
-// @keyframes blink {
-//   0%, 100% { opacity: 1; }
-//   50%       { opacity: 0.3; }
-// }
+@media (prefers-reduced-motion: reduce) {
+  .animate-ticker,
+  .animate-floaty,
+  .animate-floaty-2,
+  .animate-floaty-3,
+  .animate-marquee-up,
+  .animate-spin-slow-kf,
+  .bg-tech-grid,
+  .text-aurora { animation: none; }
+}
 
-// @keyframes pulse-ring {
-//   0%   { transform: translate(-50%, -50%) scale(0.8); opacity: 0.6; }
-//   100% { transform: translate(-50%, -50%) scale(1.1); opacity: 0; }
-// }
+// Özel imleç aktifken yerel imleci gizle (yalnızca fine pointer'da eklenir)
+.has-custom-cursor,
+.has-custom-cursor a,
+.has-custom-cursor button,
+.has-custom-cursor [role="button"],
+.has-custom-cursor summary,
+.has-custom-cursor label {
+  cursor: none;
+}
 
-// /* --- Startup studio landing animasyonları --- */
-// @keyframes floaty {
-//   0%, 100% { transform: translate(0, 0) scale(1); }
-//   50%      { transform: translate(24px, -34px) scale(1.1); }
-// }
-// @keyframes floaty-2 {
-//   0%, 100% { transform: translate(0, 0) scale(1); }
-//   50%      { transform: translate(-28px, 26px) scale(1.14); }
-// }
-// @keyframes floaty-3 {
-//   0%, 100% { transform: translate(0, 0) scale(1); }
-//   50%      { transform: translate(18px, 28px) scale(0.92); }
-// }
-// @keyframes grid-pan {
-//   from { background-position: 0 0; }
-//   to   { background-position: 44px 44px; }
-// }
-// @keyframes aurora {
-//   0%   { background-position: 0% 50%; }
-//   50%  { background-position: 100% 50%; }
-//   100% { background-position: 0% 50%; }
-// }
-// @keyframes marquee-up {
-//   from { transform: translateY(0); }
-//   to   { transform: translateY(-50%); }
-// }
-// @keyframes shimmer {
-//   from { background-position: -200% 0; }
-//   to   { background-position: 200% 0; }
-// }
-// @keyframes spin-slow-kf {
-//   to { transform: rotate(360deg); }
-// }
-
-// @layer utilities {
-//   .animate-ticker  { animation: ticker 120s linear infinite; }
-//   .animate-ticker:hover { animation-play-state: paused; }
-//   .animate-blink   { animation: blink 2s ease infinite; }
-//   .pulse-ring-1    { animation: pulse-ring 3s ease-out infinite; }
-//   .pulse-ring-2    { animation: pulse-ring 3s ease-out infinite 0.6s; }
-//   .pulse-ring-3    { animation: pulse-ring 3s ease-out infinite 1.2s; }
-//   .pulse-ring-4    { animation: pulse-ring 3s ease-out infinite 1.8s; }
-
-//   .animate-floaty   { animation: floaty 10s ease-in-out infinite; }
-//   .animate-floaty-2 { animation: floaty-2 13s ease-in-out infinite; }
-//   .animate-floaty-3 { animation: floaty-3 16s ease-in-out infinite; }
-//   .animate-marquee-up { animation: marquee-up 18s linear infinite; }
-//   .animate-spin-slow-kf { animation: spin-slow-kf 22s linear infinite; }
-
-//   .bg-tech-grid {
-//     background-image:
-//       linear-gradient(to right, rgba(11, 11, 11, 0.06) 1px, transparent 1px),
-//       linear-gradient(to bottom, rgba(11, 11, 11, 0.06) 1px, transparent 1px);
-//     background-size: 44px 44px;
-//     animation: grid-pan 8s linear infinite;
-//   }
-//   .text-aurora {
-//     background-image: linear-gradient(110deg, #0b0b0b 20%, #f74ea1 40%, #d8f34e 60%, #0b0b0b 80%);
-//     background-size: 200% auto;
-//     -webkit-background-clip: text;
-//     background-clip: text;
-//     color: transparent;
-//     animation: shimmer 6s linear infinite;
-//   }
-// }
-
-// @media (prefers-reduced-motion: reduce) {
-//   .animate-floaty,
-//   .animate-floaty-2,
-//   .animate-floaty-3,
-//   .animate-marquee-up,
-//   .animate-spin-slow-kf,
-//   .bg-tech-grid,
-//   .text-aurora { animation: none; }
-// }
-
-// // Özel imleç aktifken yerel imleci gizle (yalnızca fine pointer'da eklenir)
-// .has-custom-cursor,
-// .has-custom-cursor a,
-// .has-custom-cursor button,
-// .has-custom-cursor [role="button"],
-// .has-custom-cursor summary,
-// .has-custom-cursor label {
-//   cursor: none;
-// }
-
-// // Hareket azaltma tercihinde marquee'yi durdur
-// @media (prefers-reduced-motion: reduce) {
-//   .animate-ticker { animation: none; }
-// }
-
-// .skip-link {
-//   position: absolute;
-//   top: -100px;
-//   left: 8px;
-//   background: #1d9e75;
-//   color: #fff;
-//   padding: 12px 20px;
-//   border-radius: 6px;
-//   font-weight: 700;
-//   text-decoration: none;
-//   z-index: 9999;
-//   transition: top 0.2s;
-// }
-// .skip-link:focus { top: 8px; }
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 8px;
+  background: #1d9e75;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: 700;
+  text-decoration: none;
+  z-index: 9999;
+  transition: top 0.2s;
+}
+.skip-link:focus { top: 8px; }

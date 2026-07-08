@@ -1,17 +1,70 @@
 "use client";
 
 // app/components/site/ContactForm.tsx
-// CTA bölümündeki "Fikrini anlat" formu. Server action ile MesstaLead'e yazar.
+// CTA bölümündeki "Fikrini anlat" formu. Yumuşak kapı: form herkese görünür,
+// "Gönder"e basınca giriş yoksa taslak saklanıp /login'e yönlendirilir; dönüşte
+// taslak geri yüklenir. Girişliyken ad/e-posta oturumdan otomatik dolar.
 
-import { useActionState } from "react";
-import { ArrowUpRight, CheckCircle2 } from "lucide-react";
+import { useActionState, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ArrowUpRight, CheckCircle2, Lock } from "lucide-react";
 import { submitLead, type ActionResult } from "@/app/lib/messta-actions";
 import type { MesstaCopy } from "@/app/components/site-i18n/messta-content";
 
 const initial: ActionResult = { ok: false };
+const DRAFT_KEY = "messta:leadDraft";
 
-export default function ContactForm({ copy }: { copy: MesstaCopy["contact"] }) {
+export default function ContactForm({
+  copy,
+  isLoggedIn,
+  defaultName = "",
+  defaultEmail = "",
+  redirectTo = "/#contact",
+  gateHint,
+}: {
+  copy: MesstaCopy["contact"];
+  isLoggedIn: boolean;
+  defaultName?: string;
+  defaultEmail?: string;
+  redirectTo?: string;
+  gateHint: string;
+}) {
+  const router = useRouter();
   const [state, formAction, pending] = useActionState(submitLead, initial);
+  const [name, setName] = useState(defaultName);
+  const [email, setEmail] = useState(defaultEmail);
+  const [idea, setIdea] = useState("");
+  const restored = useRef(false);
+
+  // Login dönüşünde taslağı geri yükle (bir kez).
+  useEffect(() => {
+    if (restored.current) return;
+    restored.current = true;
+    try {
+      const raw = sessionStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        const d = JSON.parse(raw);
+        if (d.name) setName(d.name);
+        if (d.email) setEmail(d.email);
+        if (d.idea) setIdea(d.idea);
+      }
+    } catch {}
+  }, []);
+
+  // Sonuç: giriş gerekiyorsa taslağı sakla + login'e yönlendir; başarıda taslağı temizle.
+  useEffect(() => {
+    if (state.requireAuth) {
+      try {
+        sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ name, email, idea }));
+      } catch {}
+      router.push(`/login?redirect=${encodeURIComponent(redirectTo)}`);
+    }
+    if (state.ok) {
+      try {
+        sessionStorage.removeItem(DRAFT_KEY);
+      } catch {}
+    }
+  }, [state, name, email, idea, redirectTo, router]);
 
   if (state.ok) {
     return (
@@ -37,6 +90,8 @@ export default function ContactForm({ copy }: { copy: MesstaCopy["contact"] }) {
           name="name"
           required
           minLength={2}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           className="rounded-xl border border-ink/15 bg-white px-4 py-3 text-ink outline-none transition-colors focus:border-kotapink"
         />
       </div>
@@ -49,6 +104,8 @@ export default function ContactForm({ copy }: { copy: MesstaCopy["contact"] }) {
           name="email"
           type="email"
           required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className="rounded-xl border border-ink/15 bg-white px-4 py-3 text-ink outline-none transition-colors focus:border-kotapink"
         />
       </div>
@@ -62,6 +119,8 @@ export default function ContactForm({ copy }: { copy: MesstaCopy["contact"] }) {
           required
           minLength={5}
           rows={4}
+          value={idea}
+          onChange={(e) => setIdea(e.target.value)}
           placeholder={copy.formIdeaPlaceholder}
           className="resize-none rounded-xl border border-ink/15 bg-white px-4 py-3 text-ink outline-none transition-colors placeholder:text-ink/30 focus:border-kotapink"
         />
@@ -71,7 +130,7 @@ export default function ContactForm({ copy }: { copy: MesstaCopy["contact"] }) {
         <p className="text-sm text-kotapink sm:col-span-2">{state.message}</p>
       )}
 
-      <div className="sm:col-span-2">
+      <div className="flex flex-col items-start gap-3 sm:col-span-2">
         <button
           type="submit"
           disabled={pending}
@@ -80,6 +139,12 @@ export default function ContactForm({ copy }: { copy: MesstaCopy["contact"] }) {
           {pending ? copy.formSubmitting : copy.formSubmit}
           <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover:rotate-45" />
         </button>
+        {!isLoggedIn && (
+          <p className="inline-flex items-center gap-1.5 text-xs text-ink/45">
+            <Lock className="h-3.5 w-3.5" />
+            {gateHint}
+          </p>
+        )}
       </div>
     </form>
   );

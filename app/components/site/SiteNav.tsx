@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Plus, Shield } from "lucide-react";
+import { Plus, Shield, LogOut, LogIn } from "lucide-react";
 import Magnetic from "../motion/Magnetic";
 import LangSwitcher from "./LangSwitcher";
 import { useMesstaCopy } from "@/app/lib/useMesstaCopy";
+import { logout } from "@/app/(components)/(authentication-layout)/authentication/actions";
 
 // KOTA tarzı üst bar + tam ekran flyout menü.
 // Logo (M mark) + mıknatıslı CTA + dil değiştirici + hamburger.
@@ -42,7 +43,13 @@ type MenuItem = {
   children?: { label: string; href: string }[];
 };
 
-export default function SiteNav({ showAdmin = false }: { showAdmin?: boolean }) {
+export default function SiteNav({
+  showAdmin = false,
+  isLoggedIn = false,
+}: {
+  showAdmin?: boolean;
+  isLoggedIn?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const [sub, setSub] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -253,10 +260,25 @@ export default function SiteNav({ showAdmin = false }: { showAdmin?: boolean }) 
                       Admin Paneli
                     </a>
                   )}
-                  <div className="flex items-center gap-2 text-sm text-paper/60">
-                    <span>{nav.langLabel}:</span>
-                    <LangSwitcher variant="dark" />
-                  </div>
+                  {isLoggedIn ? (
+                    <form action={logout}>
+                      <button
+                        type="submit"
+                        className="inline-flex items-center gap-2 rounded-full border border-paper/25 px-5 py-3.5 font-medium text-paper transition-colors hover:bg-paper hover:text-ink"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        {copy.auth.logout}
+                      </button>
+                    </form>
+                  ) : (
+                    <a
+                      href="/login"
+                      className="inline-flex items-center gap-2 rounded-full border border-paper/25 px-5 py-3.5 font-medium text-paper transition-colors hover:bg-paper hover:text-ink"
+                    >
+                      <LogIn className="h-4 w-4" />
+                      {copy.auth.signInCta}
+                    </a>
+                  )}
                 </div>
               </nav>
 

@@ -7,8 +7,10 @@
 import { z } from "zod";
 import prisma from "./prisma";
 import { getServerLocale } from "./locale";
+import { validateRequest } from "@/app/auth";
 
-export type ActionResult = { ok: boolean; message?: string };
+// requireAuth: giriş yapılmamışsa true → client kullanıcıyı /login'e yönlendirir.
+export type ActionResult = { ok: boolean; message?: string; requireAuth?: boolean };
 
 const leadSchema = z.object({
   name: z.string().trim().min(2, "İsim çok kısa").max(120),
@@ -18,6 +20,10 @@ const leadSchema = z.object({
 });
 
 export async function submitLead(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+  // Yumuşak kapı: işlem yapmak için giriş şart.
+  const { user } = await validateRequest();
+  if (!user) return { ok: false, requireAuth: true };
+
   const parsed = leadSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
@@ -61,6 +67,10 @@ export async function submitInvestorApplication(
   _prev: ActionResult,
   formData: FormData
 ): Promise<ActionResult> {
+  // Yumuşak kapı: işlem yapmak için giriş şart.
+  const { user } = await validateRequest();
+  if (!user) return { ok: false, requireAuth: true };
+
   const parsed = investorSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
